@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProcedureDocument;
 
 class Document extends Model
 {
@@ -19,4 +20,9 @@ class Document extends Model
         'title',
         'file_name',
     ];
+
+    public function procedureDocument()
+    {
+        return $this->hasMany(ProcedureDocument::class);
+    }
 }
