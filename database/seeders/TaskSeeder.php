@@ -20,6 +20,7 @@ class TaskSeeder extends Seeder
                 [
                     'id' => 1,
                     'name' => '育児',
+                    'is_visible' => 1,
                 ],
             ],
         );

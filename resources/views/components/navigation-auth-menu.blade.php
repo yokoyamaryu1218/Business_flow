@@ -17,6 +17,12 @@
                     </x-jet-nav-link>
                 </div>
 
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-jet-nav-link href="{{ route('task.index') }}" :active="request()->routeIs('task.*')">
+                        作業管理
+                    </x-jet-nav-link>
+                </div>
+
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-jet-nav-link href="{{ route('document.index') }}" :active="request()->routeIs('document.index')">

@@ -21,6 +21,13 @@ Route::get('/', function () {
 });
 
 Route::middleware('can:user-higher')->group(function () {
+    Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
+    Route::get('/tasks/create', [TaskController::class, 'create'])->name('task.create');
+    Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
+    Route::get('/tasks/{task}', [TaskController::class, 'edit'])->name('task.edit');
+    Route::post('/tasks/{task}', [TaskController::class, 'update'])->name('task.update');
+    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+
     Route::get('/manual', [DocumentController::class, 'index'])->name('document.index');
     Route::get('/manual/store', [DocumentController::class, 'create'])->name('document.create');
     Route::post('/manual/store', [DocumentController::class, 'store'])->name('document.store');
