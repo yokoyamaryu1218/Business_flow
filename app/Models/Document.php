@@ -19,6 +19,7 @@ class Document extends Model
         'document_number',
         'title',
         'file_name',
+        'is_visible',
     ];
 
     public function procedureDocument()

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use App\Models\Procedure;
 use App\Models\ProcedureDocument;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
@@ -19,9 +21,9 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        $documents = Document::all();
-
-        return view('documents.index', compact('documents'));
+        $title = "マニュアル管理";
+        $documents = Document::paginate(10);
+        return view('documents.index', compact('documents', 'title'));
     }
 
     /**
@@ -31,7 +33,8 @@ class DocumentController extends Controller
      */
     public function create()
     {
-        return view('documents.create');
+        $title = "マニュアル新規登録";
+        return view('documents.create', compact('title'));
     }
 
     /**
@@ -42,27 +45,37 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request)
     {
-        $last_number = Document::orderBy('id', 'desc')->value('document_number');
+        DB::beginTransaction();
 
-        $documentdb = new DocumentService;
-        $document_number = $documentdb->numbering($last_number);
+        try {
+            $last_number = Document::orderBy('id', 'desc')->value('document_number');
 
-        Document::create([
-            'document_number' => $document_number,
-            'title' => $request['document_title'],
-            'file_name' => $document_number . '.txt',
-        ]);
+            $documentdb = new DocumentService;
+            $document_number = $documentdb->numbering($last_number);
 
-        // ファイルの保存先パスを生成
-        $filePath = 'documents/' . $document_number . '.txt';
+            $documentData = [
+                'document_number' => $document_number,
+                'title' => $request['document_title'],
+                'file_name' => $document_number . '.txt',
+                'is_visible' => $request['is_visible'],
+            ];
 
-        // ファイルに内容を保存
-        Storage::put($filePath, $request['document_details']);
+            Document::create($documentData);
 
-        session()->flash('status', '登録完了');
-        $documents = Document::all();
+            $documentSV = new DocumentService;
+            // テキストファイルに保存する
+            $documentSV->savaDocument($document_number, $request['document_details']);
 
-        return view('documents.index', compact('documents'));
+            session()->flash('status', '登録完了');
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            session()->flash('alert', '登録エラー');
+        }
+
+        return redirect()->route('document.index');
     }
 
     /**
@@ -84,18 +97,18 @@ class DocumentController extends Controller
      */
     public function edit(Document $document)
     {
-        $fileName = $document->file_name;
-        $filePath = 'documents/' . $fileName;
+        $title = "マニュアル編集";
 
         // テキストファイルの内容を取得する
-        $fileContents = Storage::disk('local')->get($filePath);
+        $documentSV = new DocumentService;
+        $fileContents = $documentSV->getContents($document->file_name);
 
         $procedures = Procedure::join('procedure_documents', 'procedures.id', '=', 'procedure_documents.procedure_id')
             ->where('procedure_documents.document_id', $document->id)
             ->select('procedures.id', 'procedures.name')
             ->get();
 
-        return view('documents.edit', compact('document', 'fileContents', 'procedures'));
+        return view('documents.edit', compact('document', 'fileContents', 'procedures', 'title'));
     }
 
     /**
@@ -107,7 +120,36 @@ class DocumentController extends Controller
      */
     public function update(UpdateDocumentRequest $request, Document $document)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $fileName = $document->file_name;
+            $filePath = 'documents/' . $fileName;
+
+            // テキストファイルの内容を取得する
+            $fileContents = Storage::disk('local')->get($filePath);
+
+            // テキストファイルの内容を書き換える
+            $fileContents = $request['document_details'];
+
+            // 書き換えた内容をテキストファイルに保存する
+            Storage::disk('local')->put($filePath, $fileContents);
+
+            $document = Document::findOrFail($document->id);
+            $document->title = $request['document_title'];
+            $document->is_visible = $request['is_visible'];
+            $document->updated_at = Carbon::now();
+            $document->save();
+
+            DB::commit();
+
+            session()->flash('status', '更新完了');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('alert', '更新エラー');
+        }
+
+        return redirect()->route('document.index');
     }
 
     /**
@@ -118,21 +160,36 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
-        $document = Document::findOrFail($document->id);
+        DB::beginTransaction();
 
-        $procedureIds = $document->procedureDocument()->pluck('id');
+        try {
+            $document = Document::findOrFail($document->id);
 
-        // procedure_documentsテーブルから関連するレコードを削除
-        ProcedureDocument::whereIn('procedure_id', $procedureIds)->delete();
+            // ファイルの存在を確認してから削除する
+            $fileName = $document->file_name;
+            $filePath = 'documents/' . $fileName;
+            if (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
 
-        // proceduresテーブルから関連するレコードを削除
-        $document->procedureDocument()->delete();
+            $procedureIds = $document->procedureDocument()->pluck('id');
 
-        $document->delete();
+            // procedure_documentsテーブルから関連するレコードを削除
+            ProcedureDocument::whereIn('procedure_id', $procedureIds)->delete();
 
-        session()->flash('status', '削除完了');
-        $documents = Document::all();
+            // proceduresテーブルから関連するレコードを削除
+            $document->procedureDocument()->delete();
 
-        return view('documents.index', compact('documents'));
+            $document->delete();
+
+            DB::commit();
+
+            session()->flash('status', '削除完了');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('alert', '削除エラー');
+        }
+
+        return redirect()->route('document.index');
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('document_number');
             $table->string('title');
             $table->string('file_name');
+            $table->boolean('is_visible');
             $table->timestamps();
         });
     }

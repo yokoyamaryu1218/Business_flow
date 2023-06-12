@@ -86,7 +86,6 @@
 
 .Form-Item-Input {
     position: relative;
-    /* 追加 */
     border: 1px solid #ddd;
     border-radius: 6px;
     margin-left: 40px;
@@ -98,6 +97,27 @@
     max-width: 410px;
     background: #eaedf2;
     font-size: 18px;
+}
+
+.Form-Item .select-wrapper {
+    position: relative;
+    display: inline-block;
+    border-radius: 6px;
+    height: 48px;
+    flex: 1;
+    max-width: 426px;
+}
+
+.Form-Item .select-wrapper::after {
+    content: "\25BE";
+    position: absolute;
+    top: calc(50% + 3px);
+    /* 少し下に調整 */
+    right: 0.5em;
+    /* 右側の位置を微調整 */
+    transform: translateY(-50%);
+    font-size: 18px;
+    pointer-events: none;
 }
 
 @media screen and (max-width: 480px) {
@@ -151,19 +171,39 @@
 }
 
 @media screen and (max-width: 480px) {
-    .edit-button {
+    .Form-Btn {
         margin-top: 24px;
         padding-top: 8px;
         padding-bottom: 8px;
         width: 160px;
         font-size: 16px;
     }
+}
 
-    .addButton {
-        margin-top: 24px;
-        padding-top: 10px;
-        padding-bottom: 8px;
-        width: 160px;
-        font-size: 16px;
+@media screen and (max-width: 480px) {
+    .Form-Item .select-wrapper::after {
+        /* 矢印の上下の位置を調整 */
+        top: calc(50% + 15px);
+        /* 例: 3px 下に移動 */
+        right: 20px;
+        /* 例: より右に移動 */
+    }
+}
+
+.Form-Item-RadioGroup {
+    display: flex;
+    align-items: center;
+    position: relative;
+    border-radius: 6px;
+    margin-left: 40px;
+}
+
+.Form-Item-RadioGroup label {
+    margin-right: 10px;
+}
+
+@media (max-width: 480px) {
+    .Form-Item-RadioGroup {
+        margin-top: 10px;
     }
 }
