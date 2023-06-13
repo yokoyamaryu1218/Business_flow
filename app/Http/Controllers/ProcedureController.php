@@ -141,7 +141,65 @@ class ProcedureController extends Controller
      */
     public function update(UpdateProcedureRequest $request, Procedure $procedure)
     {
-      
+        try {
+            DB::beginTransaction();
+
+            $name = $request->input('name');
+
+            $previousProcedureId = $request->input('previous_procedure_id');
+            $previousProcedureIds = implode(',', $previousProcedureId);
+
+            $nextProcedureId =  $request->input('next_procedure_id');
+            $nextProcedureIds = implode(',', $nextProcedureId);
+
+            $documentIds = $request->input('document_id');
+            $procedureDocuments = ProcedureDocument::where('procedure_id', $procedure->id)->get();
+
+            foreach ($documentIds as $documentId) {
+                $procedureDocument = $procedureDocuments->where('document_id', $documentId)->first();
+                if ($procedureDocument) {
+                    $procedureDocuments = $procedureDocuments->reject(function ($item) use ($documentId) {
+                        return $item->document_id == $documentId;
+                    });
+                } else {
+                    ProcedureDocument::create([
+                        'procedure_id' => $procedure->id,
+                        'document_id' => $documentId,
+                    ]);
+                }
+            }
+
+            // $procedureDocumentsに残った要素を削除する
+            foreach ($procedureDocuments as $procedureDocument) {
+                $procedureDocument->delete();
+            }
+
+            $procedures = Procedure::findOrFail($procedure->id);
+            $procedures->name = $name;
+            $procedures->previous_procedure_id  = $previousProcedureIds;
+            $procedures->next_procedure_ids  = $nextProcedureIds;
+            $procedures->updated_at = Carbon::now();
+            $procedures->save();
+
+            DB::commit();
+
+            session()->flash('status', '更新完了');
+            $procedure_list = Procedure::all();
+            $documents = Document::all();
+            $my_documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
+                ->where('procedure_documents.procedure_id', $procedures->id)
+                ->get();
+
+            $procedureSV = new ProcedureService;
+            $sortedProcedures = $procedureSV->getProcedureOrder($procedures);
+            $previousProcedureIds = $procedureSV->separateCharacters($procedures->previous_procedure_id);
+            $nextProcedureIds = $procedureSV->separateCharacters($procedures->next_procedure_ids);
+
+            return view('procedures.edit', compact('procedures', 'previousProcedureIds', 'nextProcedureIds', 'procedure_list', 'documents', 'my_documents', 'sortedProcedures'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('status', '更新エラー');
+        }
     }
 
     /**
