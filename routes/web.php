@@ -28,6 +28,11 @@ Route::middleware('can:user-higher')->group(function () {
     Route::post('/tasks/{task}', [TaskController::class, 'update'])->name('task.update');
     Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
 
+    Route::get('/procedure/{procedure}', [ProcedureController::class, 'edit'])->name('procedure.edit');
+    Route::post('/procedure/{procedure}', [ProcedureController::class, 'update'])->name('procedure.update');
+    Route::get('/procedure/store/{id}', [ProcedureController::class, 'create'])->name('procedure.create');
+    Route::post('/procedure/store/{id}', [ProcedureController::class, 'store'])->name('procedure.store');
+
     Route::get('/manual', [DocumentController::class, 'index'])->name('document.index');
     Route::get('/manual/store', [DocumentController::class, 'create'])->name('document.create');
     Route::post('/manual/store', [DocumentController::class, 'store'])->name('document.store');

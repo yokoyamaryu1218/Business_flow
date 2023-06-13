@@ -70,7 +70,7 @@
 
                 <div class="Form">
                     <p class="Form-Item-Label mt-4">関連する手順</p>
-                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="#">手順登録</button>
+                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('procedure.create', ['id' => $task->id]) }}'">手順登録</button>
 
                     @foreach ($sortedProcedures as $groupIndex => $procedureGroup)
                     @php
@@ -84,7 +84,7 @@
                         </p>
                         <input type="text" name="procedure_name[{{$groupIndex}}][{{$procedure->id}}]" id="procedure_name_{{ $groupIndex }}_{{ $index }}" class="delete-input Form-Item-Input" value="{{ $procedure->name }}" readonly>
                         <div class="ml-2">
-                            <a href="#" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none">編集する</a>
+                            <a href="{{ route('procedure.edit', ['procedure' => $procedure->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none">編集する</a>
                         </div>
                     </div>
                     @if ($loop->last && !empty($sortedProcedures[$groupIndex + 1]))
