@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +17,21 @@ use App\Http\Controllers\DocumentController;
 |
 */
 
+Route::get('/register', function () {
+    abort(404);
+});
+
+Route::get('/forgot-password', function () {
+    abort(404);
+});
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 Route::middleware('can:user-higher')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
     Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
     Route::get('/tasks/create', [TaskController::class, 'create'])->name('task.create');
     Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
@@ -41,6 +52,13 @@ Route::middleware('can:user-higher')->group(function () {
     Route::delete('/manual/{document}', [DocumentController::class, 'destroy'])->name('document.destroy');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('/task_list', [DashboardController::class, 'tasks'])->name('dashboard.tasks');
+Route::get('/product/{id}', [DashboardController::class, 'task_details'])->name('dashboard.task_details');
+Route::get('/faq_manual', [DashboardController::class, 'documents'])->name('dashboard.documents');
+Route::get('/faq_manual/{id}', [DashboardController::class, 'documents_details'])->name('dashboard.documents_details');
+Route::get('/product/{id1}/{id2}', [DashboardController::class, 'procedures'])->name('dashboard.procedures');
+Route::get('/search', [DashboardController::class, 'search'])->name('dashboard.search');
+
+// Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+//     return view('dashboard');
+// })->name('dashboard');
