@@ -21,9 +21,11 @@ class TaskController extends Controller
     public function index()
     {
         $title = "作業管理";
-        $tasks = Task::all();
+        $tasks = Task::paginate(10);
+
         return view('tasks.index', compact('title', 'tasks'));
     }
+
 
     /**
      * Show the form for creating a new resource.

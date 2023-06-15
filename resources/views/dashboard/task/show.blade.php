@@ -1,12 +1,6 @@
 <div x-data="{ showModal1: false, documents: [], procedureId: null }">
     <x-app-layout>
 
-        <style>
-            tr:hover .flex-shrink-0 {
-                color: white;
-            }
-        </style>
-        
         @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
         <x-slot name="header">
@@ -29,12 +23,14 @@
             </ol>
         </x-slot>
 
+        <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
+
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                    <div class="mt-8 text-2xl border-l-4 border-red-500 pl-4">
+                        <div class="mt-8 text-2xl border-l-4 border-red-500 pl-4">
                             <b>{{ $title }}</b>
                         </div>
 
@@ -47,36 +43,47 @@
                                 <div class="flex items-center">
                                     <img class="mr-2" src="data:image/png;base64,{{Config::get('base64.task')}}">
                                     <h2 class="mt-4 flex items-center text-2xl font-extrabold dark:text-white" style="display: flex; align-items: center; border-bottom: 2px solid #ba2636; padding: 7px 0 6px; flex-grow: 1;">
-                                        作業{{ $flowNumber }} 一覧
+                                        ルーティン{{ $flowNumber }}
                                     </h2>
                                 </div>
                                 <div class="ml-12">
                                     <div class="mt-2 text-gray-500">
-                                        ご覧になりたい手順をクリックしてください。
+                                        ご覧になりたい手順名をクリックしてください。
                                     </div>
-                                    @php
-                                    $count = 1;
-                                    @endphp
-                                    @foreach ($procedureGroup as $works)
-                                    <div>
-                                        <div class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-red-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 250px;" x-data="{ taskId: '{{ $works->task_id }}', procedureId: '{{ $works->id }}' }" @click.stop="showModal1 = !showModal1; fetchDocuments('{{ $works->id }}'); procedureId = '{{ $works->id }}'">
-                                            <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                                <path d="M15 10l-5-5v10l5-5z" />
-                                            </svg>
-                                            <span class="flex-shrink-0 self-start">
-                                                手順{{ $count }}: {{ $works->name }}
-                                            </span>
+                                    <div class="relative m-3 flex flex-wrap mx-auto justify-left">
+                                        @foreach ($procedureGroup as $index => $procedure)
+                                        <div class="max-w-[320px] bg-white border border-gray-400 shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer transition-colors duration-300 hover:bg-red-500" x-data="{ taskId: '{{ $procedure->task_id }}', procedureId: '{{ $procedure->id }}' }" @click.stop="showModal1 = !showModal1; fetchDocuments('{{ $procedure->id }}'); procedureId = '{{ $procedure->id }}'">
+                                            <div class="mt-2 pl-1 mb-1 flex items-start">
+                                                <style>
+                                                    .hover-red-text:hover p {
+                                                        color: white;
+                                                    }
+                                                </style>
+                                                <div class="mt-2 pl-1 mb-1 hover-red-text">
+                                                    <div>
+                                                        <p class="text-base font-semibold text-gray-900 mb-0">手順{{ $loop->iteration }}</p>
+                                                        <p class="text-base font-semibold text-gray-900 mb-0">{{ $procedure->name }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                        @if (!$loop->last)
+                                        <div class="flex justify-center items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                        @endif
+                                        @endforeach
                                     </div>
-                                    @php
-                                    $count++;
-                                    @endphp
-                                    @endforeach
+                                    @if (!$loop->last && !empty($sortedProcedures[$groupIndex + 1]))
+                                    <hr>
+                                    @endif
                                 </div>
                                 @endforeach
                             </div>
                         </div>
-
+                        {{ $sortedProcedures->links() }}
                     </div>
                 </div>
             </div>

@@ -24,78 +24,92 @@
 
     <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
 
-    <style>
-        input:checked+label {
-            border-color: black;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-    </style>
-
     <div class="pt-10 pb-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="max-w-2xl py-4 mx-auto">
 
-                    <form method="POST" action="{{ route('document.update', ['document' => $document->id]) }}">
-                        @csrf
-                        @method('post')
-                        <div class="Form">
-                            <x-jet-validation-errors class="mb-4" />
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                    <div class="mt-8 text-2xl border-l-4 border-black pl-4">
+                        <b>{{ $title }}</b>
+                    </div>
 
-                            <p class="Form-Item-Label mt-4">マニュアル編集：</p>
+                    <div class="bg-opacity-25 mt-4">
+                        <div class="p-4">
 
-                            <div class="Form-Item">
-                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアルタイトル</p>
-                                <input type="text" id="document_title" class="Form-Item-Input" name="document_title" value="{{ $document->title }}" required>
-                            </div>
-                            <hr>
-
-                            <div class="Form-Item">
-                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル内容</p>
-                                <textarea class="Form-Item-Textarea" id="document_details" name="document_details">{{ $fileContents }}</textarea>
-                            </div>
-                            <hr>
-
-                            <div class="Form-Item">
-                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
-                                <div class="Form-Item-RadioGroup">
-                                    <label>
-                                        <input type="radio" name="is_visible" value="1" @if ($document->is_visible === 1) { checked } @endif> 表示
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="is_visible" value="0" @if ($document->is_visible === 0) { checked } @endif> 非表示
-                                    </label>
-                                </div>
-                            </div>
-                            <hr>
-
-                            @if (!empty($procedures))
-                            @foreach ($procedures as $index => $procedure)
-                            <div class="Form-Item">
-                                @if ($index === 0)
-                                <p class="Form-Item-Label">紐づいている手順</p>
-                                @else
-                                <p class="Form-Item-Label">&nbsp;</p>
+                            <div class="flex items-center">
+                                @if($document->is_visible === 1)
+                                <body>
+                                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">確認</button>
+                                </body>
                                 @endif
-                                <input type="text" name="procedure_name" id="procedure_name" class="delete-input Form-Item-Input" value="{{ $procedure['name'] }}" readonly title="この画面では変更できません。">
                             </div>
-                            @endforeach
-                            @else
-                            <div class="Form-Item">
-                                <p class="Form-Item-Label">紐づいている手順</p>
-                                <input type="text" ame="procedure_name" id="procedure_name" class="delete-input Form-Item-Input" readonly title="この画面では変更できません。">
-                            </div>
-                            @endif
+                            
+                            <section class="text-gray-600 body-font">
+                                <div class="container py-5 mx-auto flex flex-wrap">
+                                    <div class="lg:w-2/3 mx-auto">
 
-                            <div class="flex justify-between my-4">
-                                <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                                <button type="submit" class="flex mb-4 text-white bg-indigo-500 hover:bg-indigo-500 border-0 py-2 px-6 focus:outline-none rounded">更新</button>
-                            </div>
+                                        <form method="POST" action="{{ route('document.update', ['document' => $document->id]) }}">
+                                            @csrf
+                                            @method('post')
+                                            <x-jet-validation-errors class="mb-4" />
 
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル名</p>
+                                                <input type="text" id="document_title" class="Form-Item-Input" name="document_title" value="{{ $document->title }}" required>
+                                            </div>
+                                            <hr>
+
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル内容</p>
+                                            </div>
+                                            <div class="flex flex-wrap w-full px-10 mb-4" style="background-color: #efefef; position: relative; height: 200px;">
+                                                <textarea id="document_details" name="document_details" class="absolute inset-0 w-full resize-none outline-none border-none bg-transparent" style="resize: vertical; background-color: #efefef;">{{ $fileContents }}</textarea>
+                                            </div>
+                                            <hr>
+
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
+                                                <div class="Form-Item-RadioGroup">
+                                                    <label>
+                                                        <input type="radio" name="is_visible" value="1" @if ($document->is_visible === 1) { checked } @endif> 表示
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="is_visible" value="0" @if ($document->is_visible === 0) { checked } @endif> 非表示
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr>
+
+                                            @if (!empty($procedures))
+                                            @foreach ($procedures as $index => $procedure)
+                                            <div class="Form-Item">
+                                                @if ($index === 0)
+                                                <p class="Form-Item-Label">紐づいている手順</p>
+                                                @else
+                                                <p class="Form-Item-Label">&nbsp;</p>
+                                                @endif
+                                                <input type="text" name="procedure_name" id="procedure_name" class="delete-input Form-Item-Input" value="{{ $procedure['name'] }}" readonly title="この画面では変更できません。">
+                                            </div>
+                                            @endforeach
+                                            @else
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label">紐づいている手順</p>
+                                                <input type="text" ame="procedure_name" id="procedure_name" class="delete-input Form-Item-Input" readonly title="この画面では変更できません。">
+                                            </div>
+                                            @endif
+
+                                            <div class="flex justify-between items-center mt-4">
+                                                <button type="button" class="text-white bg-yellow-400 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                                <button type="submit" class="text-white bg-indigo-500 hover:bg-indigo-600 border-0 py-2 px-6 focus:outline-none rounded">更新</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </section>
                         </div>
-                    </form>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -104,20 +118,29 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                <div class="Form">
-                    <p class="Form-Item-Label mt-4">マニュアル削除：</p>
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                    <div class="bg-opacity-25 mt-4">
+                        <div class="p-4">
 
-                    <form method="POST" action="{{ route('document.destroy', ['document' => $document->id]) }}">
-                        @csrf
-                        @method('delete')
-                        <div class="flex justify-between my-4">
-                            <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                            <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                            <p class="Form-Item-Label mt-4">マニュアル削除：</p>
+
+                            <section class="text-gray-600 body-font">
+                                <div class="container py-1 mx-auto flex flex-wrap">
+                                    <div class="lg:w-2/3 mx-auto">
+                                        <form method="POST" action="{{ route('document.destroy', ['document' => $document->id]) }}">
+                                            @csrf
+                                            @method('delete')
+                                            <div class="flex justify-between my-4">
+                                                <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                                <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
-                    </form>
-
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>

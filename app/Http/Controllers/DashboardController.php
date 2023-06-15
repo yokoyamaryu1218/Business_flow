@@ -145,36 +145,42 @@ class DashboardController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
-     */ public function search(Request $request)
+     */
+    public function search(Request $request)
     {
         $title = "検索結果";
         $search = $request->input('search');
+        $search_target = $request->input('search_target');
 
         $search_list = [];
-        $search_target = null;
-        $pagenationSV = new PaginationService;
 
-        if ($search) {
-            $search_target = $request->input('search_target', 'all');
-            $perPage = 20; // 1ページあたりの項目数
+        $taskPage = $request->query('task_page', 1);
+        $procedurePage = $request->query('procedure_page', 1);
+        $documentPage = $request->query('document_page', 1);
 
-            if ($search_target === 'task') {
-                $query = Task::where('name', 'like', '%' . $search . '%');
-                $search_list['task'] = $pagenationSV->paginateResults($query, $perPage, $request->page);
-            } else if ($search_target === 'procedure') {
-                $query = Procedure::where('name', 'like', '%' . $search . '%');
-                $search_list['procedure'] = $pagenationSV->paginateResults($query, $perPage, $request->page);
-            } else if ($search_target === 'document') {
-                $query = Document::where('title', 'like', '%' . $search . '%');
-                $search_list['document'] = $pagenationSV->paginateResults($query, $perPage, $request->page);
+        if (!empty($search)) {
+            if (is_array($search_target) && count($search_target) > 0) {
+                if (in_array('task', $search_target)) {
+                    $task = Task::where('name', 'like', '%' . $search . '%')->paginate(10, ['*'], 'task_page', $taskPage);
+                    $search_list['task'] = $task;
+                }
+                if (in_array('procedure', $search_target)) {
+                    $procedure = Procedure::where('name', 'like', '%' . $search . '%')->paginate(10, ['*'], 'procedure_page', $procedurePage);
+                    $search_list['procedure'] = $procedure;
+                }
+                if (in_array('document', $search_target)) {
+                    $document = Document::where('title', 'like', '%' . $search . '%')->paginate(10, ['*'], 'document_page', $documentPage);
+                    $search_list['document'] = $document;
+                }
             } else {
-                $taskQuery = Task::where('name', 'like', '%' . $search . '%');
-                $procedureQuery = Procedure::where('name', 'like', '%' . $search . '%');
-                $documentQuery = Document::where('title', 'like', '%' . $search . '%');
+                // 検索対象が指定されていない場合、全ての対象で検索
+                $task = Task::where('name', 'like', '%' . $search . '%')->paginate(10, ['*'], 'task_page', $taskPage);
+                $procedure = Procedure::where('name', 'like', '%' . $search . '%')->paginate(10, ['*'], 'procedure_page', $procedurePage);
+                $document = Document::where('title', 'like', '%' . $search . '%')->paginate(10, ['*'], 'document_page', $documentPage);
 
-                $search_list['task'] = $pagenationSV->paginateResults($taskQuery, $perPage, $request->page);
-                $search_list['procedure'] = $pagenationSV->paginateResults($procedureQuery, $perPage, $request->page);
-                $search_list['document'] = $pagenationSV->paginateResults($documentQuery, $perPage, $request->page);
+                $search_list['task'] = $task;
+                $search_list['procedure'] = $procedure;
+                $search_list['document'] = $document;
             }
         }
 

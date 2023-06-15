@@ -47,6 +47,21 @@
                                     <input type="search" name="search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ $search }}" placeholder="ここに文字を入力してください。">
                                     <button type="submit" class="ml-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg">検索</button>
                                 </div>
+                                <div class="ml-12 mt-2">
+                                    <span class="text-gray-700">検索対象:</span>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="search_target[]" value="task" class="form-checkbox" {{ in_array('task', (array)$search_target) ? 'checked' : '' }}>
+                                        <span class="ml-2">作業</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-4">
+                                        <input type="checkbox" name="search_target[]" value="procedure" class="form-checkbox" {{ in_array('procedure', (array)$search_target) ? 'checked' : '' }}>
+                                        <span class="ml-2">手順</span>
+                                    </label>
+                                    <label class="inline-flex items-center ml-4">
+                                        <input type="checkbox" name="search_target[]" value="document" class="form-checkbox" {{ in_array('document', (array)$search_target) ? 'checked' : '' }}>
+                                        <span class="ml-2">マニュアル</span>
+                                    </label>
+                                </div>
                             </form>
                         </div>
 
@@ -58,8 +73,13 @@
                         <div class="my-4">
                             @if (!empty($search_list['task']) || !empty($search_list['procedure']) || !empty($search_list['document']))
                             <div class="my-4">
-                                @if (!empty($search_list['task']) && ($search_target == 'task' || $search_target == null))
-                                <h3 class="font-bold">作業 検索結果:{{ count($search_list['task'])}}</h3>
+
+                                @if ((!empty($search_list['task']) && ($search_target === 'task' || empty($search_target))) || (is_array($search_target) && in_array('task', $search_target)))
+                                <h3 class="font-bold">作業 検索結果:</h3>
+                                @if ($search_list['task']->isEmpty())
+                                <p class="py-2">検索ワードに一致する「作業」は見つかりませんでした。</p>
+                                <hr>
+                                @else
                                 <ul class="my-2 ml-4">
                                     @foreach ($search_list['task'] as $task)
                                     <li>
@@ -70,81 +90,82 @@
                                     <!-- 他のタスクの情報を表示する場合は、必要なプロパティを追加します -->
                                     @endforeach
                                 </ul>
+                                <div class="my-2">
+                                    {{ $search_list['task']->appends(request()->query())->links() }}
+                                </div>
+                                <hr>
+                                @endif
+                                @endif
+
+                                @if ((!empty($search_list['procedure']) && ($search_target === 'procedure' || empty($search_target))) || (is_array($search_target) && in_array('procedure', $search_target)))
+                                <h3 class="font-bold">手順 検索結果:</h3>
+                                @if ($search_list['procedure']->isEmpty())
+                                <p class="py-2">検索ワードに一致する「手順」は見つかりませんでした。</p>
+                                <hr>
                                 @else
-                                @if ($search_target != 'task')
-                                <h3 class="font-bold">作業 検索結果:</h3>
                                 <ul class="my-2 ml-4">
-                                    <p>検索ワードに一致する「作業」は見つかりませんでした。</p>
+                                    @foreach ($search_list['procedure'] as $procedure)
+                                    <li class="my-2">
+                                        <a class="text-blue-700 hover:text-red-500" x-data="{ taskId: '{{ $procedure['task_id'] }}', procedureId: '{{ $procedure['id'] }}' }" @click.stop="showModal1 = !showModal1; fetchDocuments('{{ $procedure['id'] }}'); procedureId = '{{ $procedure['id'] }}'">
+                                            {{ $procedure['name'] }}
+                                        </a>
+                                    </li>
+                                    <!-- 他の手順の情報を表示する場合は、必要なプロパティを追加します -->
+                                    @endforeach
                                 </ul>
+                                <div class="my-2">
+                                    {{ $search_list['procedure']->appends(request()->query())->links() }}
+                                </div>
+                                <hr>
                                 @endif
                                 @endif
-                                <hr class="dashed">
+
+                                @if ((!empty($search_list['document']) && ($search_target === 'document' || empty($search_target))) || (is_array($search_target) && in_array('document', $search_target)))
+                                <h3 class="font-bold">マニュアル 検索結果:</h3>
+                                @if ($search_list['document']->isEmpty())
+                                <p class="py-2">検索ワードに一致する「マニュアル」は見つかりませんでした。</p>
+                                <hr>
+                                @else
+                                <ul class="my-2 ml-4">
+                                    @foreach ($search_list['document'] as $document)
+                                    <li class="my-2">
+                                        <a href="{{ route('dashboard.documents_details', ['id' => $document['id']]) }}" class="text-blue-700 hover:text-red-500">
+                                            {{ $document['title'] }}
+                                        </a>
+                                    </li>
+                                    <!-- 他のドキュメントの情報を表示する場合は、必要なプロパティを追加します -->
+                                    @endforeach
+                                </ul>
+                                <div class="my-2">
+                                    {{ $search_list['document']->appends(request()->query())->links() }}
+                                </div>
+                                <hr>
+                                @endif
+                                @endif
+
                             </div>
-
-                            @if (!empty($search_list['procedure']) && ($search_target == 'procedure' || $search_target == null))
-                            <h3 class="font-bold">手順 検索結果:</h3>
-                            <ul class="my-2 ml-4">
-                                @foreach ($search_list['procedure'] as $procedure)
-                                <li class="my-2">
-                                    <a class="text-blue-700 hover:text-red-500" x-data="{ taskId: '{{ $procedure['task_id'] }}', procedureId: '{{ $procedure['id'] }}' }" @click.stop="showModal1 = !showModal1; fetchDocuments('{{ $procedure['id'] }}'); procedureId = '{{ $procedure['id'] }}'">
-                                        {{ $procedure['name'] }}
-                                    </a>
-                                </li>
-                                <!-- 他の手順の情報を表示する場合は、必要なプロパティを追加します -->
-                                @endforeach
-                            </ul>
                             @else
-                            @if ($search_target != 'procedure')
-                            <h3 class="font-bold">手順 検索結果:</h3>
-                            <ul class="my-2 ml-4">
-                                <p>検索ワードに一致する「手順」は見つかりませんでした。</p>
-                            </ul>
+                            @if (empty($search))
+                            <p>"{{ $search }}"の検索結果は0件です。</p>
                             @endif
                             @endif
-                            <hr class="dashed">
-
-                            @if (!empty($search_list['document']) && ($search_target == 'document' || $search_target == null))
-                            <h3 class="font-bold">マニュアル 検索結果:</h3>
-                            <ul class="my-2 ml-4">
-                                @foreach ($search_list['document'] as $document)
-                                <li class="my-2">
-                                    <a href="{{ route('dashboard.documents_details', ['id' => $document['id']]) }}" class="text-blue-700 hover:text-red-500">
-                                        {{ $document['title'] }}
-                                    </a>
-                                </li>
-                                <!-- 他のドキュメントの情報を表示する場合は、必要なプロパティを追加します -->
-                                @endforeach
-                            </ul>
-                            @else
-                            @if ($search_target != 'document')
-                            <h3 class="font-bold">マニュアル 検索結果:</h3>
-                            <ul class="my-2 ml-4">
-                                <p>検索ワードに一致する「マニュアル」は見つかりませんでした。</p>
-                            </ul>
-                            @endif
-                            @endif
-                            <hr class="dashed">
                         </div>
-                        @else
-                        "{{ $search }}"の検索結果は0件です。</br>
-                        あなたがお探しの検索ワードに一致する情報は見つかりませんでした。
-                        @endif
+
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal1 -->
-        <div class="fixed inset-0 flex items-center justify-center z-20 bg-black bg-opacity-50 duration-300" x-show="showModal1" x-transition:enter="transition duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90">
-            <div class="relative sm:w-3/4 md:w-1/2 lg:w-1/3 mx-2 sm:mx-auto my-10 opacity-100" @click.away="showModal1 = false">
-                <livewire:documents :key="$task->id" />
+            <!-- Modal1 -->
+            <div class="fixed inset-0 flex items-center justify-center z-20 bg-black bg-opacity-50 duration-300" x-show="showModal1" x-transition:enter="transition duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90">
+                <div class="relative sm:w-3/4 md:w-1/2 lg:w-1/3 mx-2 sm:mx-auto my-10 opacity-100" @click.away="showModal1 = false">
+                    <livewire:documents :key="$task->id" />
+                </div>
             </div>
-        </div>
 
-        <script>
-            function fetchDocuments(procedureId) {
-                Livewire.emit('fetchDocuments', procedureId);
-            }
-        </script>
+            <script>
+                function fetchDocuments(procedureId) {
+                    Livewire.emit('fetchDocuments', procedureId);
+                }
+            </script>
     </x-app-layout>
 </div>

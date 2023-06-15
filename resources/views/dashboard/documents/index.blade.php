@@ -48,11 +48,7 @@
                                     </h2>
                                 </body>
                             </div>
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-500">
-                                    検索対象：マニュアル
-                                </div>
-                            </div>
+
                             <form action="{{ route('dashboard.search') }}" method="GET">
                                 @method('get')
                                 <div class="ml-12 mt-5 flex items-center">
@@ -61,6 +57,11 @@
                                     <button type="submit" class="ml-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg">検索</button>
                                 </div>
                             </form>
+                            <div class="ml-12">
+                                <div class="mt-2 text-gray-500">
+                                    検索対象：マニュアル
+                                </div>
+                            </div>
                         </div>
 
                         <div class="p-4">
@@ -71,7 +72,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2">
                                     @foreach ($documents as $document)
                                     <div>
-                                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 250px;">
+                                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
                                             <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                                 <path d="M15 10l-5-5v10l5-5z" />
                                             </svg>
