@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Models\Procedure;
+use App\Models\Routine;
 use App\Models\ProcedureDocument;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Services\ProcedureService;
+use App\Services\PaginationService;
 
 class TaskController extends Controller
 {
@@ -83,15 +86,46 @@ class TaskController extends Controller
      * @param  \App\Models\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function edit(Task $task)
+    public function edit(Request $request, Task $task)
     {
         $title = "作業詳細";
-        $task = Task::findOrFail($task->id);
-        $procedures = Procedure::where('task_id', $task->id)->get();
-        $procedureSV = new ProcedureService;
-        $sortedProcedures = $procedureSV->getProcedureOrder($procedures);
 
-        return view('tasks.edit', compact('title', 'task', 'procedures', 'sortedProcedures'));
+        $pagination = 10;
+        $page = $request->query('page', 1); // リクエストパラメータからページ番号を取得
+
+        $procedurePage = $request->query('product_page', 1);
+        $routinePage = $request->query('routine_page', 1);
+
+        $task = Task::findOrFail($task->id);
+        $procedures = Procedure::where('task_id', $task->id)->paginate(10, ['*'], 'product_page', $procedurePage);
+
+        $routines = Routine::where('task_id', $task->id)->get();
+
+        $sortedProcedures = [];
+
+        foreach ($routines as $routine) {
+            $sortedProcedure = [];
+
+            $sortedProcedure[] = Procedure::find($routine->previous_procedure_id);
+
+            if ($routine->next_procedure_ids !== null) {
+                $nextProcedureIds = explode(',', $routine->next_procedure_ids);
+
+                foreach ($nextProcedureIds as $nextProcedureId) {
+                    $sortedProcedure[] = Procedure::find($nextProcedureId);
+                }
+            }
+
+            $sortedProcedure[] = Procedure::find($routine->next_procedure_id);
+
+            $sortedProcedures[] = $sortedProcedure;
+        }
+
+        $paginationSV = new PaginationService;
+        $sortedProcedures = $paginationSV->paginateResults($sortedProcedures, $pagination = 5, $page);
+        $sortedProcedures->appends(['routine_page' => $routinePage]);
+
+        return view('tasks.edit', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures'));
     }
 
     /**
@@ -129,8 +163,7 @@ class TaskController extends Controller
      *
      * @param  \App\Models\Task  $task
      * @return \Illuminate\Http\Response
-     */
-    public function destroy(Task $task)
+     */    public function destroy(Task $task)
     {
         DB::beginTransaction();
 

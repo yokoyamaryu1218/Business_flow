@@ -41,13 +41,15 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function task_details($id)
+    public function task_details(Request $request, $id)
     {
         $task = Task::findOrFail($id);
         $procedures = Procedure::where('task_id', $id)->get();
 
         $procedureSV = new ProcedureService;
-        $sortedProcedures = $procedureSV->getProcedureOrder($procedures);
+        $pagination = 10;
+        $page = $request->query('page', 1); // リクエストパラメータからページ番号を取得
+        $sortedProcedures = $procedureSV->getProcedureOrder($procedures, $pagination, $page);
 
         $title = $task->name . "手順一覧";
 

@@ -27,101 +27,201 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                <div class="Form">
-                    <x-status class="mb-4" />
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                    <div class="mt-8 text-2xl border-l-4 border-black pl-4">
+                        <b>{{ $task->name }} {{ $title }}</b>
+                    </div>
 
-                    <p class="Form-Item-Label mt-4">「{{ $task->name }}」を編集中</p>
+                    <div class="bg-opacity-25 mt-4">
+                        <div class="p-4">
 
-                    <form method="POST" action="{{ route('task.update', ['task' => $task->id]) }}">
-                        @csrf
-                        @method('post')
-                        <div class="Form-Item">
-                            <p class="Form-Item-Label">作業名</p>
-                            <input type="text" class="Form-Item-Input" name="task" id="task" value="{{ $task->name }}">
-                        </div>
-                        <hr>
-
-                        <div class="Form-Item">
-                            <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
-                            <div class="Form-Item-RadioGroup">
-                                <label>
-                                    <input type="radio" name="is_visible" value="1" @if ($task->is_visible === 1) { checked } @endif> 表示
-                                </label>
-                                <label>
-                                    <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
-                                </label>
+                            <div class="mb-8">
+                                <x-status />
                             </div>
-                        </div>
-                        <hr>
 
-                        <div class="flex justify-between mt-4 mb-8">
-                            <button type="button" class="text-white bg-yellow-400 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                            <button type="submit" class="text-white bg-indigo-500 hover:bg-indigo-600 border-0 py-2 px-6 focus:outline-none rounded">更新</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+                            <section class="text-gray-600 body-font">
+                                <div class="container py-5 mx-auto flex flex-wrap">
+                                    <div class="lg:w-2/3 mx-auto">
 
-    <div class="py-4">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                                        <form method="POST" action="{{ route('task.update', ['task' => $task->id]) }}">
+                                            @csrf
+                                            @method('post')
+                                            <x-jet-validation-errors class="mb-4" />
 
-                <div class="Form">
-                    <p class="Form-Item-Label mt-4">関連する手順</p>
-                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('procedure.create', ['id' => $task->id]) }}'">手順登録</button>
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>作業名</p>
+                                                <input type="text" class="Form-Item-Input" name="task" id="task" value="{{ $task->name }}">
+                                            </div>
+                                            <hr>
 
-                    @foreach ($sortedProcedures as $groupIndex => $procedureGroup)
-                    @php
-                    $flowNumber = $groupIndex + 1;
-                    @endphp
-                    <p class="Form-Item-Label">【業務フロー{{ $flowNumber }}】</p>
-                    @foreach ($procedureGroup as $index => $procedure)
-                    <div class="Form-Item">
-                        <p class="Form-Item-Label">
-                            手順{{ $loop->iteration }}
-                        </p>
-                        <input type="text" name="procedure_name[{{$groupIndex}}][{{$procedure->id}}]" id="procedure_name_{{ $groupIndex }}_{{ $index }}" class="delete-input Form-Item-Input" value="{{ $procedure->name }}" readonly>
-                        <div class="ml-2">
-                            <a href="{{ route('procedure.edit', ['procedure' => $procedure->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none">編集する</a>
+                                            <div class="Form-Item">
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
+                                                <div class="Form-Item-RadioGroup">
+                                                    <label>
+                                                        <input type="radio" name="is_visible" value="1" @if ($task->is_visible === 1) { checked } @endif> 表示
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr>
+
+                                            <div class="flex justify-between items-center mt-4">
+                                                <button type="button" class="text-white bg-yellow-400 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                                <button type="submit" class="text-white bg-indigo-500 hover:bg-indigo-600 border-0 py-2 px-6 focus:outline-none rounded">更新</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                     </div>
-                    @if ($loop->last && !empty($sortedProcedures[$groupIndex + 1]))
-                    <hr>
-                    @endif
-                    @endforeach
-                    @endforeach
-                    <hr>
-
                 </div>
-
             </div>
-
         </div>
     </div>
-
 
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                <div class="Form">
-                    <p class="Form-Item-Label mt-4">手順削除：</p>
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                    <div class="p-4">
 
-                    <form method="POST" action="{{ route('task.destroy', ['task' => $task->id]) }}">
-                        @csrf
-                        @method('delete')
-                        <div class="flex justify-between my-4">
-                            <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                            <button onclick="return confirm('作業に関連する手順も削除されます。\n本当に削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
-                        </div>
-                    </form>
+                        <body>
+                            <p class="Form-Item-Label mt-4">{{ $task->name }} に紐づいている手順</p>
+                            <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('procedure.create', ['id' => $task->id]) }}'">手順登録</button>
+                        </body>
 
+                        <section class="text-gray-600 body-font">
+                            <div class="container py-10 mx-auto flex flex-wrap">
+                                <div class="lg:w-4/5 mx-auto">
+
+                                    <div class="mb-8">
+                                        <x-status />
+                                    </div>
+
+                                    <table class="table-auto w-full text-left whitespace-no-wrap">
+                                        <thead>
+                                            <tr>
+                                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">手順名</th>
+                                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">公開設定</th>
+                                                <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100"></th>
+                                            </tr>
+                                        </thead>
+                                        @foreach($procedures as $procedure)
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
+                                                {{ $procedure->name}}
+                                            </td>
+                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
+                                                @if ($procedure->is_visible)
+                                                表示中
+                                                @else
+                                                非表示
+                                                @endif
+                                            </td>
+                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
+                                                <a href="{{ route('procedure.edit', ['procedure' => $procedure->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 hover:bg-green-500 py-2 px-4 inline-flex items-center focus:outline-none">編集</a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        @endforeach
+                                    </table>
+                                    {{ $procedures->links() }}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-
             </div>
         </div>
-    </div>
+
+        <div class="py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+                    <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                        <div class="p-4">
+
+                            <body>
+                                <p class="Form-Item-Label mt-4">
+                                    ルーティン一覧
+                                </p>
+                            </body>
+
+                            @foreach ($sortedProcedures as $groupIndex => $procedureGroup)
+                            @php
+                            $flowNumber = $groupIndex + 1;
+                            $routine = $routines[$groupIndex];
+                            @endphp
+
+                            <body>
+                                <p class="flex items-center text-lg font-extrabold dark:text-white">【ルーティン{{ $flowNumber }}】</p>
+                                <button type="button" class="flex mb-4 ml-auto text-white bg-green-400 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded" onclick="window.location.href = '{{ route('procedure.routine', ['id1' => $task->id, 'id2' => $routine->id]) }}'">編集</button>
+                            </body>
+                            <div class="relative m-3 flex flex-wrap mx-auto justify-left">
+                                @foreach ($procedureGroup as $index => $procedure)
+                                <div class="max-w-sm min-w-[150px] bg-white border-2 border-black shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer">
+                                    <div class="mt-4 pl-2 mb-2">
+                                        <div>
+                                            <p class="text-lg font-semibold text-gray-900 mb-0">手順{{ $index + 1 }}</p>
+                                            <p class="text-lg font-semibold text-gray-900 mb-0">{{ $procedure->name }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if ($index !== count($procedureGroup) - 1)
+                                <div class="flex justify-center items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+                                @endif
+                                @endforeach
+                            </div>
+
+                            @if ($groupIndex !== count($sortedProcedures) - 1 && !empty($sortedProcedures[$groupIndex + 1]))
+                            <hr>
+                            @endif
+                            @endforeach
+                        </div>
+                        {{ $sortedProcedures->links() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+                    <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                        <div class="bg-opacity-25 mt-4">
+                            <div class="p-4">
+
+                                <p class="Form-Item-Label mt-4">手順削除：</p>
+
+                                <section class="text-gray-600 body-font">
+                                    <div class="container py-1 mx-auto flex flex-wrap">
+                                        <div class="lg:w-2/3 mx-auto">
+                                            <form method="POST" action="{{ route('task.destroy', ['task' => $task->id]) }}">
+                                                @csrf
+                                                @method('delete')
+                                                <div class="flex justify-between my-4">
+                                                    <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                                    <button onclick="return confirm('作業に関連する手順も削除されます。\n本当に削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 </x-app-layout>

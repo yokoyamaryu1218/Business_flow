@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             DocumentsSeeder::class,
             ProcedureSeeder::class,
             ProcedureDocumentSeeder::class,
+            RoutineSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
     }

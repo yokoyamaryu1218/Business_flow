@@ -31,15 +31,12 @@ class ProcedureController extends Controller
      */
     public function create($id)
     {
+        $title = "手順新規登録";
         $task = Task::findOrFail($id);
         $procedure_list = Procedure::all();
-        $documents = Document::all();
+        $documents_list = Document::all();
 
-        $procedures = Procedure::where('task_id', $id)->get();
-        $procedureSV = new ProcedureService;
-        $sortedProcedures = $procedureSV->getProcedureOrder($procedures);
-
-        return view('procedures.create', compact('task', 'procedure_list', 'documents', 'sortedProcedures'));
+        return view('procedures.create', compact('title', 'task', 'procedure_list', 'documents_list'));
     }
 
     /**
@@ -113,6 +110,7 @@ class ProcedureController extends Controller
      */
     public function edit(Procedure $procedure)
     {
+        $title = "手順詳細";
         $procedures = Procedure::findOrFail($procedure->id);
 
         $procedureSV = new ProcedureService;
@@ -120,16 +118,13 @@ class ProcedureController extends Controller
         $nextProcedureIds = $procedureSV->separateCharacters($procedures->next_procedure_ids);
 
         $procedure_list = Procedure::all();
-        $documents = Document::all();
+        $documents_list = Document::all();
 
         $my_documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $procedures->id)
             ->get();
 
-        $relatedProcedures = Procedure::where('task_id', $procedures->task_id)->get();
-        $sortedProcedures = $procedureSV->getProcedureOrder($relatedProcedures);
-
-        return view('procedures.edit', compact('procedures', 'previousProcedureIds', 'nextProcedureIds', 'procedure_list', 'documents', 'my_documents', 'sortedProcedures'));
+        return view('procedures.edit', compact('title', 'procedures', 'previousProcedureIds', 'nextProcedureIds', 'procedure_list', 'documents_list', 'my_documents'));
     }
 
     /**
@@ -139,7 +134,7 @@ class ProcedureController extends Controller
      * @param  \App\Models\Procedure  $procedure
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProcedureRequest $request, Procedure $procedure)
+     public function update(UpdateProcedureRequest $request, Procedure $procedure)
     {
         try {
             DB::beginTransaction();
@@ -184,22 +179,11 @@ class ProcedureController extends Controller
             DB::commit();
 
             session()->flash('status', '更新完了');
-            $procedure_list = Procedure::all();
-            $documents = Document::all();
-            $my_documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
-                ->where('procedure_documents.procedure_id', $procedures->id)
-                ->get();
-
-            $procedureSV = new ProcedureService;
-            $sortedProcedures = $procedureSV->getProcedureOrder($procedures);
-            $previousProcedureIds = $procedureSV->separateCharacters($procedures->previous_procedure_id);
-            $nextProcedureIds = $procedureSV->separateCharacters($procedures->next_procedure_ids);
-
-            return view('procedures.edit', compact('procedures', 'previousProcedureIds', 'nextProcedureIds', 'procedure_list', 'documents', 'my_documents', 'sortedProcedures'));
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('status', '更新エラー');
         }
+        return redirect()->route('task.edit', ['task' => $procedure->task_id]);
     }
 
     /**

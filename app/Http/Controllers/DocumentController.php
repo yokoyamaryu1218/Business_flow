@@ -111,6 +111,13 @@ class DocumentController extends Controller
         return view('documents.edit', compact('document', 'fileContents', 'procedures', 'title'));
     }
 
+    public function file_download($document)
+    {
+        $document = Document::findOrFail($document);
+        $documentSV = new DocumentService;
+        return $documentSV->downloadFile($document->file_name);
+    }
+
     /**
      * Update the specified resource in storage.
      *

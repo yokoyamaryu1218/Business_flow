@@ -32,7 +32,7 @@ class ProcedureSeeder extends Seeder
                 'name' => '離乳食を作る',
                 'task_id' => 1,
                 'previous_procedure_id' => "2",
-                'next_procedure_ids' => '1',
+                'next_procedure_ids' => '1,5',
             ],
             [
                 'name' => '寝かしつける',

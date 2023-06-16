@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @section('title', $title . ' / ' . config('app.name', 'Laravel'))
+    @section('title', $title . ' / ' . 'businessflow')
 
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -36,14 +36,15 @@
                     <div class="bg-opacity-25 mt-4">
                         <div class="p-4">
 
-                            <div class="flex items-center">
+                            <div class="flex items-center justify-end">
+                                <a href="{{ route('document.file_download', ['document' => $document->id]) }}" target="_blank" class="mr-2">
+                                    <img class="w-4 h-4" src="data:image/png;base64,{{Config::get('base64.download')}}">
+                                </a>
                                 @if($document->is_visible === 1)
-                                <body>
-                                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">確認</button>
-                                </body>
+                                <button type="button" class="flex mb-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">確認</button>
                                 @endif
                             </div>
-                            
+
                             <section class="text-gray-600 body-font">
                                 <div class="container py-5 mx-auto flex flex-wrap">
                                     <div class="lg:w-2/3 mx-auto">

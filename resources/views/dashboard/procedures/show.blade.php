@@ -7,7 +7,7 @@
     </style>
 
     <x-app-layout>
-        @section('title', $title . ' / ' . config('app.name', 'Laravel'))
+        @section('title', $title . ' / ' . 'businessflow')
 
         <x-slot name="header">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">

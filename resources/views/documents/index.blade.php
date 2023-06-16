@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @section('title', $title . ' / ' . config('app.name', 'Laravel'))
+    @section('title', $title . ' / ' . 'businessflow')
 
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -27,6 +27,7 @@
                         <div class="p-4">
 
                             <div class="flex items-center">
+
                                 <body>
                                     <h2 class="flex items-center text-2xl  font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
                                         登録マニュアル一覧
@@ -50,6 +51,7 @@
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">タイトル</th>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">公開設定</th>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100"></th>
+                                                    <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100"></th>
                                                 </tr>
                                             </thead>
                                             @foreach ($documents as $document)
@@ -63,6 +65,11 @@
                                                         @else
                                                         非表示
                                                         @endif
+                                                    </td>
+                                                    <td class="font-medium border-t-2 border-gray-200 px-4 py-3 text-center">
+                                                        <a href="{{ route('document.file_download', ['document' => $document->id]) }}" target="_blank" class="mr-2">
+                                                            <img class="w-4 h-4" src="data:image/png;base64,{{Config::get('base64.download')}}">
+                                                        </a>
                                                     </td>
                                                     <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
                                                         <a href="{{ route('document.edit', ['document' => $document->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none transition-colors duration-300 ease-in-out hover:bg-green-600">編集</a>

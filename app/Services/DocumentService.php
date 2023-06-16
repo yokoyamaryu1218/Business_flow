@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Document;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class DocumentService
 {
@@ -48,5 +49,19 @@ class DocumentService
         $fileContents = Storage::disk('local')->get($filePath);
 
         return $fileContents;
+    }
+
+    public function downloadFile($fileName)
+    {
+        $filePath = 'documents/' . $fileName;
+
+        $fileContents = Storage::get($filePath);
+
+        $headers = [
+            'Content-Type' => 'text/plain',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        return new Response($fileContents, 200, $headers);
     }
 }
