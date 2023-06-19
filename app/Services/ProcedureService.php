@@ -4,9 +4,59 @@ namespace App\Services;
 
 use App\Models\Procedure;
 use App\Services\PaginationService;
+use Illuminate\Support\Facades\DB;
+use App\Models\ProcedureDocument;
 
 class ProcedureService
 {
+    // 新規登録に関する処理
+    public function createProcedure($name, $task_id, $is_visible, $documents)
+    {
+        try {
+            DB::beginTransaction();
+
+            $procedure = Procedure::create([
+                'name' => $name,
+                'task_id' => $task_id,
+                'previous_procedure_id' => null,
+                'next_procedure_id' => null,
+                'is_visible' => $is_visible,
+            ]);
+
+            foreach ($documents as $document) {
+                ProcedureDocument::create([
+                    'procedure_id' => $procedure->id,
+                    'document_id' => $document,
+                ]);
+            }
+
+            DB::commit();
+
+            session()->flash('status', '登録完了');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger($e); // エラーログに記録する
+            session()->flash('alert', '更新エラー');
+        }
+    }
+
+    public function checkDocuments($documents)
+    {
+        // 重複した値を除外して再格納
+        $documents = array_values(array_unique($documents));
+
+        // 配列から null の値を除外して再格納
+        $documents = array_filter($documents, function ($document) {
+            return $document !== null;
+        });
+
+        if (empty($documents)) {
+            return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
+        }
+
+        return $documents;
+    }
+
     public function getOrders($procedures)
     {
         $startProcedures = $procedures->where('previous_procedure_id', null);

@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    @section('title', $title . ' / ' . 'businessflow')
+    @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -22,8 +22,6 @@
         </ol>
     </x-slot>
 
-    <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
-
     <div class="pt-10 pb-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -37,11 +35,28 @@
                         <div class="p-4">
 
                             <div class="flex items-center justify-end">
-                                <a href="{{ route('document.file_download', ['document' => $document->id]) }}" target="_blank" class="mr-2">
-                                    <img class="w-4 h-4" src="data:image/png;base64,{{Config::get('base64.download')}}">
-                                </a>
+                                <div class="hidden md:block">
+                                    <details class="w-30 bg-indigo-500 p-4 rounded-xl shadow-md group mx-auto overflow-hidden max-h-[56px] open:!max-h-[400px] transition-[max-height] duration-500 overflow-hidden hover:bg-indigo-600">
+                                        <summary class="outline-none cursor-pointer focus:underline focus:text-indigo-600 font-semibold marker:text-transparent group-open:before:rotate-90 before:origin-center relative before:w-[18px] before:h-[18px] before:transition-transform before:duration-200 before:-left-1 before:top-2/4 before:-translate-y-2/4 before:absolute before:bg-no-repeat before:bg-[length:18px_18px] before:bg-center before:bg-[url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20class%3D%22h-6%20w-6%22%20fill%3D%22none%22%20viewBox%3D%220%200%2024%2024%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%3E%0A%20%20%3Cpath%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20d%3D%22M9%205l7%207-7%207%22%20%2F%3E%0A%3C%2Fsvg%3E')]">
+                                            <span class="text-white">確認</span>
+                                        </summary>
+                                        @if($document->is_visible === 1)
+                                        <hr class="my-2 scale-x-150" />
+                                        <div class="text-sm -m-4 -mt-2 p-4 bg-gray-50 hover:bg-gray-300" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">
+                                            <a class="text-black">表示確認</a>
+                                        </div>
+                                        @endif
+                                        <hr class="my-2 scale-x-150" />
+                                        <div class="text-sm -m-4 -mt-2 p-4 bg-gray-50 hover:bg-gray-300" onclick="window.location.href = '{{ route('document.file_download', ['document' => $document->id]) }}'">
+                                            <a class="text-black">マニュアルダウンロード</a>
+                                        </div>
+                                    </details>
+                                </div>
+
                                 @if($document->is_visible === 1)
-                                <button type="button" class="flex mb-4 text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">確認</button>
+                                <div class="md:hidden">
+                                    <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.open('{{ route('dashboard.documents_details', ['id' => $document->id]) }}', '_blank')">表示確認</button>
+                                </div>
                                 @endif
                             </div>
 
@@ -55,21 +70,21 @@
                                             <x-jet-validation-errors class="mb-4" />
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル名</p>
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>マニュアル名</p>
                                                 <input type="text" id="document_title" class="Form-Item-Input" name="document_title" value="{{ $document->title }}" required>
                                             </div>
                                             <hr>
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル内容</p>
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>マニュアル内容</p>
                                             </div>
-                                            <div class="flex flex-wrap w-full px-10 mb-4" style="background-color: #efefef; position: relative; height: 200px;">
-                                                <textarea id="document_details" name="document_details" class="absolute inset-0 w-full resize-none outline-none border-none bg-transparent" style="resize: vertical; background-color: #efefef;">{{ $fileContents }}</textarea>
+                                            <div class="flex flex-wrap w-full px-10 mb-4" style="background-color: #efefef; position: relative; height: 200px; overflow: hidden;">
+                                                <textarea id="document_details" name="document_details" class="absolute inset-0 w-full resize-none outline-none border-none bg-transparent" style="resize: none; background-color: #efefef; height: 100%;" required>{{ $fileContents }}</textarea>
                                             </div>
                                             <hr>
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>公開設定</p>
                                                 <div class="Form-Item-RadioGroup">
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($document->is_visible === 1) { checked } @endif> 表示
@@ -115,6 +130,8 @@
         </div>
     </div>
 
+    <!-- マニュアルを削除できるのはマネージャ以上 -->
+    @if(Auth::user()->role !== 9)
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -145,4 +162,5 @@
             </div>
         </div>
     </div>
+    @endif
 </x-app-layout>

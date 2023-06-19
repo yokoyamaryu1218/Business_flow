@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('previous_procedure_id');
             $table->string('next_procedure_ids')->nullable();
             $table->unsignedBigInteger('next_procedure_id')->nullable();
+            $table->boolean('is_visible');
             $table->timestamps();
         
             $table->foreign('task_id')->references('id')->on('tasks');

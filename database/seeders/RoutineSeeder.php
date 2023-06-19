@@ -21,12 +21,14 @@ class RoutineSeeder extends Seeder
                 'previous_procedure_id' => 2,
                 'next_procedure_ids' => "3,1",
                 'next_procedure_id' => 4,
+                'is_visible' => 1,
             ],
             [
                 'task_id' => 1,
                 'previous_procedure_id' => 2,
-                'next_procedure_ids' => "3,5",
+                'next_procedure_ids' => "5",
                 'next_procedure_id' => 4,
+                'is_visible' => 1,
             ],
         ];
 

@@ -68,7 +68,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     @foreach ($work_list as $index => $works)
                     @if ($index < 9) <div>
-                        <a href="{{ route('dashboard.task_details', ['id' => $works->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-red-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
+                        <a href="{{ route('dashboard.task_details', ['id' => $works->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-red-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0 navLink">
                             <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M15 10l-5-5v10l5-5z" />
                             </svg>
@@ -77,7 +77,7 @@
                 </div>
                 @elseif ($index == 9)
                 <div>
-                    <a href="{{ route('dashboard.tasks') }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-red-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
+                    <a href="{{ route('dashboard.tasks') }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-red-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0 navLink">
                         <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path d="M19 11H13V5C13 4.45 12.55 4 12 4C11.45 4 11 4.45 11 5V11H5C4.45 11 4 11.45 4 12C4 12.55 4.45 13 5 13H11V19C11 19.55 11.45 20 12 20C12.55 20 13 19.55 13 19V13H19C19.55 13 20 12.55 20 12C20 11.45 19.55 11 19 11Z" />
                         </svg>
@@ -101,14 +101,15 @@
                     </h2>
                 </body>
             </div>
-            <div class="ml-12">
+            <!-- ここで表示位置を変えられる -->
+            <div class="ml-12"> 
                 <div class="mt-2 text-gray-500">
                     ご覧になりたいマニュアルをクリックしてください。
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     @foreach ($document_list as $index => $document)
                     @if ($index < 9) <div>
-                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
+                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0 navLink">
                             <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                 <path d="M15 10l-5-5v10l5-5z" />
                             </svg>
@@ -117,7 +118,7 @@
                 </div>
                 @elseif ($index == 9)
                 <div>
-                    <a href="{{ route('dashboard.documents') }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
+                    <a href="{{ route('dashboard.documents') }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0 navLink">
                         <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path d="M19 11H13V5C13 4.45 12.55 4 12 4C11.45 4 11 4.45 11 5V11H5C4.45 11 4 11.45 4 12C4 12.55 4.45 13 5 13H11V19C11 19.55 11.45 20 12 20C12.55 20 13 19.55 13 19V13H19C19.55 13 20 12.55 20 12C20 11.45 19.55 11 19 11Z" />
                         </svg>

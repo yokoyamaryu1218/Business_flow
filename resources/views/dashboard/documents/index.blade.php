@@ -1,12 +1,6 @@
 <x-app-layout>
 
-    <style>
-        tr:hover .flex-shrink-0 {
-            color: white;
-        }
-    </style>
-
-    @section('title', $title . ' / ' . 'businessflow')
+    @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -72,7 +66,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2">
                                     @foreach ($documents as $document)
                                     <div>
-                                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0" style="width: 235px;">
+                                        <a href="{{ route('dashboard.documents_details', ['id' => $document->id]) }}" class="my-4 inline-flex items-center justify-start w-210 px-4 py-2 mb-2 text-sm font-bold text-black border border-gray-400 rounded-md hover:bg-blue-500 hover:text-white hover:border-transparent sm:w-auto sm:mb-0 navLink">
                                             <svg class="h-5 w-5 -ml-1 mr-2 fill-current text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                                 <path d="M15 10l-5-5v10l5-5z" />
                                             </svg>

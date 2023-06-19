@@ -14,10 +14,10 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@1.x.x/dist/tailwind.min.css" rel="stylesheet" />
 
     <script src="{{ asset('js/jquery-3.7.0.min.js') }}" defer></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
+
     <!-- Styles -->
     <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
 
     @livewireStyles
 

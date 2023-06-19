@@ -1,5 +1,5 @@
 <x-app-layout>
-    @section('title', $title . ' / ' . 'businessflow')
+    @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -20,8 +20,6 @@
             </li>
         </ol>
     </x-slot>
-
-    <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
 
     <div>
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
@@ -45,7 +43,7 @@
                                             <x-jet-validation-errors class="mb-4" />
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>手順名</p>
+                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>作業名</p>
                                                 <input type="text" id="task_name" class="Form-Item-Input" name="task_name" :value="old('task_name')" required>
                                             </div>
                                             <hr>

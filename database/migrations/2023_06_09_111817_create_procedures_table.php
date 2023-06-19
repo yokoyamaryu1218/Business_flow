@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('previous_procedure_id')->nullable();
             $table->string('next_procedure_ids')->nullable();
             $table->foreign('task_id')->references('id')->on('tasks');
+            $table->boolean('is_visible');
             $table->timestamps();
         });
     }

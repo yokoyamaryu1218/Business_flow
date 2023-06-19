@@ -1,15 +1,11 @@
-$(document).ready(function () {
-    // イベント設定
-    $(document).on('click', '#add_previous', addOptionRow); // フォーカス追加
-    $(document).on('click', '#delete_previous', clickDeleteItem) // 著者削除
+$(document).on('click', '#add_previous', addOptionRow); // フォーカス追加
+$(document).on('click', '#delete_previous', clickDeleteItem) // 著者削除
 
-    $(document).on('click', '#add_next', addOptionRow); // フォーカス追加
-    $(document).on('click', '#delete_next', clickDeleteItem) // 著者削除
+$(document).on('click', '#add_next', addOptionRow); // フォーカス追加
+$(document).on('click', '#delete_next', clickDeleteItem) // 著者削除
 
-    $(document).on('click', '#add_book', addOptionRow); // フォーカス追加
-    $(document).on('click', '#delete_book', clickDeleteItem) // 著者削除
-
-});
+$(document).on('click', '#add_book', addOptionRow); // フォーカス追加
+$(document).on('click', '#delete_book', clickDeleteItem) // 著者削除
 
 function addOptionRow(e) {
     e.preventDefault(); // イベントのデフォルトの動作を防止
@@ -32,10 +28,14 @@ function addOptionRow(e) {
     // オプションエレメントをクローンする
     let $clone = getCloneOption(targetName + '_select_ary');
 
-    // 最後のプルダウンの後に追加する
-    $('.Form-Item').last().after($clone);
+    // 追加先の要素を取得
+    let $targetElement = $(e.target).closest('.Form-Item');
+    if ($targetElement.next().length > 0) {
+        $targetElement.next().after($clone);
+    } else {
+        $targetElement.after($clone);
+    }
 }
-
 
 function getCloneOption(id) {
     // クローンするオプションエレメントを取得

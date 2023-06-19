@@ -33,29 +33,47 @@ Route::get('/', function () {
 Route::middleware('can:user-higher')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
-    Route::get('/tasks/create', [TaskController::class, 'create'])->name('task.create');
-    Route::post('/tasks/store', [TaskController::class, 'store'])->name('task.store');
-    Route::get('/tasks/{task}', [TaskController::class, 'edit'])->name('task.edit');
-    Route::post('/tasks/{task}', [TaskController::class, 'update'])->name('task.update');
-    Route::delete('/tasks/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+    Route::get('/task', [TaskController::class, 'index'])->name('task.index');
 
-    Route::get('/procedure/{procedure}', [ProcedureController::class, 'edit'])->name('procedure.edit');
-    Route::post('/procedure/{procedure}', [ProcedureController::class, 'update'])->name('procedure.update');
-    Route::get('/procedure/store/{id}', [ProcedureController::class, 'create'])->name('procedure.create');
-    Route::post('/procedure/store/{id}', [ProcedureController::class, 'store'])->name('procedure.store');
+    Route::get('/task/task_search', [TaskController::class, 'search'])->name('task.search');
+    Route::get('/task/procedure_search', [ProcedureController::class, 'search'])->name('task.procedure.search');
 
-    Route::get('/task/{id1}/routine/{id2}', [RoutineController::class, 'index'])->name('procedure.routine');
-    Route::post('/task/{id}/routine', [RoutineController::class, 'update'])->name('procedure.routine_update');
-    Route::delete('/task/{id}/routine', [RoutineController::class, 'destroy'])->name('procedure.routine_delete');
+    Route::get('/task/create', [TaskController::class, 'create'])->name('task.create');
+    Route::post('/task/create', [TaskController::class, 'store'])->name('task.store');
+
+    Route::get('/task/{task}', [TaskController::class, 'edit'])->name('task.edit');
+    Route::post('/task/{task}', [TaskController::class, 'update'])->name('task.update');
+    Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+    Route::get('/task/{id}/search', [ProcedureController::class, 'procedure_search'])->name('task.procedure.procedure_search');
+
+    Route::get('/task/procedure/create', [ProcedureController::class, 'procedure_create'])->name('task.procedure.procedure_create');
+    Route::post('/task/procedure/create', [ProcedureController::class, 'procedure_store'])->name('task.procedure.procedure_store');
+
+    Route::get('/task/{id1}/procedure/{id2}', [ProcedureController::class, 'edit'])->name('task.procedure.edit');
+    Route::post('/task/{id1}/procedure/{id2}', [ProcedureController::class, 'update'])->name('task.procedure.update');
+
+    Route::get('/procedure/store/{id}', [ProcedureController::class, 'create'])->name('task.procedure.create');
+    Route::post('/procedure/store/{id}', [ProcedureController::class, 'store'])->name('task.procedure.store');
+
+    Route::get('/task/{id}/routine/create', [RoutineController::class, 'create'])->name('task.procedure.routine_create');
+    Route::post('/task/{id}/routine/create', [RoutineController::class, 'store'])->name('task.procedure.routine_store');
+
+    Route::get('/task/{id1}/routine/{id2}', [RoutineController::class, 'index'])->name('task.procedure.routine_edit');
+    Route::post('/task/{id}/routine', [RoutineController::class, 'update'])->name('task.procedure.routine_update');
+
+    Route::delete('/task/{id}/routine', [RoutineController::class, 'destroy'])->name('task.procedure.routine_delete');
 
     Route::get('/manual', [DocumentController::class, 'index'])->name('document.index');
+    Route::get('/manual/search', [DocumentController::class, 'search'])->name('document.search');
     Route::get('/manual/store', [DocumentController::class, 'create'])->name('document.create');
+    Route::get('/manual/file', [DocumentController::class, 'file'])->name('document.file');
     Route::post('/manual/store', [DocumentController::class, 'store'])->name('document.store');
+    Route::post('/manual/file', [DocumentController::class, 'file_store'])->name('document.file_store');
+    Route::get('/manual/download/{document}', [DocumentController::class, 'file_download'])->name('document.file_download');
+    Route::get('/manual/download-all-documents', [DocumentController::class, 'all_download'])->name('document.all_download');
     Route::get('/manual/{document}', [DocumentController::class, 'edit'])->name('document.edit');
     Route::post('/manual/{document}', [DocumentController::class, 'update'])->name('document.update');
     Route::delete('/manual/{document}', [DocumentController::class, 'destroy'])->name('document.destroy');
-    Route::get('/manual/download/{document}', [DocumentController::class, 'file_download'])->name('document.file_download');
 });
 
 Route::get('/task_list', [DashboardController::class, 'tasks'])->name('dashboard.tasks');

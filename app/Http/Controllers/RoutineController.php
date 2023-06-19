@@ -7,7 +7,7 @@ use App\Models\Procedure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreRoutineRequest;
-use App\Http\Requests\UpdateRoutineRequest;
+use App\Services\RoutineService;
 
 class RoutineController extends Controller
 {
@@ -45,9 +45,17 @@ class RoutineController extends Controller
             $procedures = $procedure;
         }
 
+        $previous_procedures_list = Procedure::where('task_id', $id1)
+            ->whereNull('previous_procedure_id')
+            ->get();
+        $next_procedures_list = Procedure::where('task_id', $id1)
+            ->whereNull('next_procedure_ids')
+            ->get();
+
+
         session(['procedure_data' => $procedures]);
         session(['routines' => $routines[0]]);
-        return view('procedures.routine', compact('title', 'task_id', 'procedures', 'procedure_list'));
+        return view('routine.edit', compact('title', 'routines', 'task_id', 'procedures', 'procedure_list', 'previous_procedures_list', 'next_procedures_list'));
     }
 
     /**
@@ -55,9 +63,19 @@ class RoutineController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($id)
     {
-        //
+        $title = "ルーティン新規登録";
+        $task_id = $id;
+        $procedure_list = Procedure::where('task_id', $id)->get();
+        $previous_procedures_list = Procedure::where('task_id', $id)
+            ->whereNull('previous_procedure_id')
+            ->get();
+        $next_procedures_list = Procedure::where('task_id', $id)
+            ->whereNull('next_procedure_ids')
+            ->get();
+
+        return view('routine.create', compact('title', 'task_id', 'procedure_list', 'previous_procedures_list', 'next_procedures_list'));
     }
 
     /**
@@ -68,7 +86,91 @@ class RoutineController extends Controller
      */
     public function store(StoreRoutineRequest $request)
     {
-        //
+        $routineSV = new RoutineService;
+        $result = $routineSV->numbering($request->input('procedure_id'));
+
+        if ($result === false) {
+            return redirect()->back()->withErrors(['previous_procedure_id' => '手順を重複して選択しています。']);
+        }
+
+        $procedureIds = $result;
+
+        $previous_procedure_id = reset($procedureIds);
+
+        $next_procedure_ids = null;
+        $next_procedure_id = null;
+
+        if (count($procedureIds) > 1) {
+            $next_procedure_id = end($procedureIds);
+
+            if (count($procedureIds) > 2) {
+                $next_procedure_ids = implode(',', array_slice($procedureIds, 1, -1));
+            }
+        }
+
+        try {
+            $routine = Routine::create([
+                'task_id' => $request['task_id'],
+                'previous_procedure_id' => $previous_procedure_id,
+                'next_procedure_ids' => $next_procedure_ids,
+                'next_procedure_id' => $next_procedure_id,
+                'is_visible' => $request['is_visible'],
+            ]);
+
+            // Routineテーブルからレコードを取得
+            $routines = Routine::where('id', $routine->id)->get();
+
+            // ルーティンに含まれるプロシージャの情報を取得
+            foreach ($routines as $routine) {
+                $procedureIds = [];
+                $procedureIds[] = $routine->previous_procedure_id;
+
+                if ($routine->next_procedure_ids !== null) {
+                    $nextProcedureIds = explode(',', $routine->next_procedure_ids);
+                    $procedureIds = array_merge($procedureIds, $nextProcedureIds);
+                }
+
+                $procedureIds[] = $routine->next_procedure_id;
+
+                $procedureRecords = Procedure::whereIn('id', $procedureIds)->get()->toArray();
+                $procedures = $procedureRecords;
+            }
+
+            // ルーチンのnext_procedure_idsがnullかどうかをチェックし、それに応じてProcedureを更新します
+            if ($routine->next_procedure_ids === null) {
+                // ルーチンからprevious_procedure_idとnext_procedure_idを取得します
+                $prevProcIdInRoutine = $routine->previous_procedure_id;
+                $nextProcIdInRoutine = $routine->next_procedure_id;
+                // 対応するIDを持つProcedureを検索します
+                $prevProcedure = Procedure::find($prevProcIdInRoutine);
+                $nextProcedure = Procedure::find($nextProcIdInRoutine);
+
+                if ($prevProcedure && $nextProcedure) {
+                    // 前の手順のnext_procedure_idsを更新します
+                    $nextProcedureIdsForPrevProc = explode(',', $prevProcedure->next_procedure_ids);
+                    if (!in_array($nextProcIdInRoutine, $nextProcedureIdsForPrevProc)) {
+                        $nextProcedureIdsForPrevProc[] = $nextProcIdInRoutine;
+                        $prevProcedure->next_procedure_ids = implode(',', $nextProcedureIdsForPrevProc);
+                        $prevProcedure->save();
+                    }
+
+                    // 次の手順のprevious_procedure_idを更新します
+                    $prevProcedureIdsForNextProc = explode(',', $nextProcedure->previous_procedure_id);
+                    if (!in_array($prevProcIdInRoutine, $prevProcedureIdsForNextProc)) {
+                        $prevProcedureIdsForNextProc[] = $prevProcIdInRoutine;
+                        $nextProcedure->previous_procedure_id = implode(',', $prevProcedureIdsForNextProc);
+                        $nextProcedure->save();
+                    }
+                }
+            }
+
+            session()->flash('status', '登録完了');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('alert', '登録エラー');
+            // return response()->json(['error' => $e->getMessage()], 500);
+        }
+        return redirect()->route('task.edit', ['task' => $routine->task_id]);
     }
 
     /**
@@ -102,26 +204,14 @@ class RoutineController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $previousProcedureIds = $request->input('previous_procedure_id');
+        $routineSV = new RoutineService;
+        $result = $routineSV->numbering($request->input('previous_procedure_id'));
 
-        $previousProcedureIds = array_filter($previousProcedureIds);
-
-        if (end($previousProcedureIds) === null) {
-            array_pop($previousProcedureIds);
+        if ($result === false) {
+            return redirect()->back()->withErrors(['previous_procedure_id' => '手順を重複して選択しています。']);
         }
 
-        $previousProcedureIds = array_values($previousProcedureIds);
-
-        // 番号で取得した後、手順の情報へ配列を置き換える
-        foreach ($previousProcedureIds as $key => $value) {
-            if (!is_numeric($value)) {
-                // 数値以外の要素の処理
-                $procedure = Procedure::where('name', $value)->first();
-                if ($procedure) {
-                    $previousProcedureIds[$key] = $procedure->id;
-                }
-            }
-        }
+        $previousProcedureIds = $result;
 
         try {
             DB::beginTransaction();
@@ -147,6 +237,7 @@ class RoutineController extends Controller
 
             // データベースに更新
             $routine->next_procedure_ids = $updatedIds;
+            $routine->is_visible = $request->input('is_visible');
             $routine->save();
 
             // Routineテーブルからレコードを取得
@@ -325,28 +416,60 @@ class RoutineController extends Controller
             $otherRoutines = Routine::where('id', '!=', $routines->id)->get();
             $foundInOtherRoutines = array_fill_keys($existingIds, false);
 
+            $nofonds = [];
             foreach ($otherRoutines as $otherRoutine) {
                 $otherNextProcedureIds = array_merge([$otherRoutine->previous_procedure_id], explode(',', $otherRoutine->next_procedure_ids), [$otherRoutine->next_procedure_id]);
                 foreach ($existingIds as $existingId) {
                     if (in_array($existingId, $otherNextProcedureIds)) {
                         $foundInOtherRoutines[$existingId] = true;
+                    } else {
+                        $nofonds[] = $existingId;
                     }
                 }
             }
 
-            // 他の手順で見つからなかったIDをチェックし、対応する手順の値をnullに設定します。
             foreach ($foundInOtherRoutines as $key => $found) {
                 if (!$found) {
-                    // 他の手順で見つからない。対応する手順の値をnullに設定します。
                     $procedure = Procedure::find($key);
                     if ($procedure) {
                         $procedure->previous_procedure_id = null;
                         $procedure->next_procedure_ids = null;
                         $procedure->save();
                     }
+                } else {
+                    $procedure = Procedure::find($key);
+                    if ($procedure) {
+                        $previousProcedureIds = explode(',', $procedure->previous_procedure_id);
+
+                        $previousKey = $key - 1;
+                        $previousProcedureIds = array_filter($previousProcedureIds, function ($value) use ($previousKey, $nofonds) {
+                            return $value != $previousKey && !in_array($value, $nofonds);
+                        });
+
+                        $procedure->previous_procedure_id = implode(',', $previousProcedureIds);
+
+                        if ($procedure->previous_procedure_id === '') {
+                            $procedure->previous_procedure_id = null;
+                        }
+
+                        $nextProcedureIds = explode(',', $procedure->next_procedure_ids);
+
+                        $nextKey = $key + 1;
+                        $nextProcedureIds = array_filter($nextProcedureIds, function ($value) use ($nextKey, $nofonds) {
+                            return $value != $nextKey && !in_array($value, $nofonds);
+                        });
+
+                        $procedure->next_procedure_ids = implode(',', $nextProcedureIds);
+
+                        if ($procedure->next_procedure_ids === '') {
+                            $procedure->next_procedure_ids = null;
+                        }
+
+                        $procedure->save();
+                    }
                 }
             }
-
+            
             // 最後に、指定されたRoutineエントリを削除
             $routineToDelete->delete();
 

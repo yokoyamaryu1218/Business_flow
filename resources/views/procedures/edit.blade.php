@@ -1,5 +1,5 @@
     <x-app-layout>
-        @section('title', $title . ' / ' . 'businessflow')
+        @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
         <x-slot name="header">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -31,10 +31,8 @@
             </ol>
         </x-slot>
 
-        <link rel="stylesheet" href="{{ asset('/css/self.css')  }}">
-
-        <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+        <div class="pt-10 pb-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
@@ -49,14 +47,20 @@
                                     <div class="container py-5 mx-auto flex flex-wrap">
                                         <div class="lg:w-2/3 mx-auto">
 
-                                            <form method="POST" action="{{ route('procedure.update', ['procedure' => $procedures->id]) }}">
+                                            <form method="POST" action="{{ route('task.procedure.update', ['id1' => $task->id, 'id2' => $procedures->id]) }}">
                                                 @csrf
                                                 @method('post')
                                                 <x-jet-validation-errors class="mb-4" />
 
                                                 <div class="Form-Item">
-                                                    <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>手順名</p>
-                                                    <input type="text" class="Form-Item-Input" name="name" id="name" value="{{ $procedures->name }}">
+                                                    <p class="Form-Item-Label">作業名</p>
+                                                    <input type="text" class="Form-Item-Input" name="name" id="name" value="{{ $task->name }}" readonly>
+                                                </div>
+                                                <hr>
+
+                                                <div class="Form-Item">
+                                                    <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>手順名</p>
+                                                    <input type="text" class="Form-Item-Input" name="name" id="name" value="{{ $procedures->name }}" required>
                                                 </div>
                                                 <hr>
 
@@ -69,26 +73,19 @@
                                                         @else
                                                         <p class="Form-Item-Label">&nbsp;</p>
                                                         @endif
-                                                        <select name="previous_procedure_id[]" class="Form-Item-Input">
-                                                            <option value="">手順を選択してください</option>
-                                                            @foreach ($procedure_list as $procedure)
-                                                            @php
-                                                            $selected = ($procedure['id'] === $previousProcedureId['id']) ? 'selected' : '';
-                                                            @endphp
-                                                            <option value="{{ $procedure['id'] }}" {{ $selected }}>{{ $procedure['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        @foreach ($procedure_list as $procedure)
+                                                        @if ($procedure->id === $previousProcedureId['id'])
+                                                        <input name="previous_procedure_name[]" class="Form-Item-Input" value="{{ $procedure->name }}" readonly>
+                                                        <input type="hidden" name="previous_procedure_id[]" class="Form-Item-Input" value="{{ $procedure->id }}" readonly>
+                                                        @break
+                                                        @endif
+                                                        @endforeach
                                                     </div>
                                                     @endforeach
                                                     @else
                                                     <div class="Form-Item">
                                                         <p class="Form-Item-Label">前の手順</p>
-                                                        <select name="previous_procedure_id[]" class="Form-Item-Input">
-                                                            <option value="">手順を選択してください</option>
-                                                            @foreach ($procedure_list as $procedure)
-                                                            <option value="{{ $procedure['id'] }}">{{ $procedure['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input name="previous_procedure_id[]" class="Form-Item-Input" readonly>
                                                     </div>
                                                     @endif
                                                 </div>
@@ -102,28 +99,35 @@
                                                         <p class="Form-Item-Label">次の手順</p>
                                                         @else
                                                         <p class="Form-Item-Label">&nbsp;</p>
-                                                        @endif <select name="next_procedure_id[]" class="Form-Item-Input">
-                                                            <option value="">手順を選択してください</option>
-                                                            @foreach ($procedure_list as $procedure)
-                                                            @php
-                                                            $selected = ($procedure['id'] === $nextProcedureId['id']) ? 'selected' : '';
-                                                            @endphp
-                                                            <option value="{{ $procedure['id'] }}" {{ $selected }}>{{ $procedure['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        @endif
+                                                        @foreach ($procedure_list as $procedure)
+                                                        @if ($procedure->id === $nextProcedureId['id'])
+                                                        <input name="next_procedure_name[]" class="Form-Item-Input" value="{{ $procedure->name }}" readonly>
+                                                        <input type="hidden" name="next_procedure_id[]" class="Form-Item-Input" value="{{ $procedure->id }}" readonly>
+                                                        @break
+                                                        @endif
+                                                        @endforeach
                                                     </div>
                                                     @endforeach
                                                     @else
                                                     <div class="Form-Item">
-                                                        <p class="Form-Item-Label">後の手順</p>
-                                                        <select name="next_procedure_id[]" class="Form-Item-Input">
-                                                            <option value="">手順を選択してください</option>
-                                                            @foreach ($procedure_list as $procedure)
-                                                            <option value="{{ $procedure['id'] }}">{{ $procedure['name'] }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <p class="Form-Item-Label">次の手順</p>
+                                                        <input name="next_procedure_id[]" class="Form-Item-Input" readonly>
                                                     </div>
                                                     @endif
+                                                </div>
+                                                <hr>
+
+                                                <div class="Form-Item">
+                                                    <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>公開設定</p>
+                                                    <div class="Form-Item-RadioGroup">
+                                                        <label>
+                                                            <input type="radio" name="is_visible" value="1" @if ($procedures->is_visible === 1) { checked } @endif> 表示
+                                                        </label>
+                                                        <label>
+                                                            <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif> 非表示
+                                                        </label>
+                                                    </div>
                                                 </div>
                                                 <hr>
 
@@ -132,7 +136,7 @@
                                                     @foreach($my_documents as $index => $my_document)
                                                     <div class="Form-Item">
                                                         @if ($index === 0)
-                                                        <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>関連するマニュアル</p>
+                                                        <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>関連するマニュアル</p>
                                                         @else
                                                         <p class="Form-Item-Label">&nbsp;</p>
                                                         @endif
@@ -202,48 +206,113 @@
                 </div>
             </div>
         </div>
+        <script src="{{ asset('js/create-add-option.js') }}" defer></script>
 
-        <script>
-            $(document).on('click', '#add_book', addOptionRow); // フォーカス追加
-            $(document).on('click', '#delete_book', clickDeleteItem) // 著者削除
+        <div class="w-full mx-auto py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
 
-            function addOptionRow(e) {
-                e.preventDefault(); // イベントのデフォルトの動作を防止
+                    <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-3">
+                        <div class="p-4">
 
-                let targetName = '';
-                switch (e.target.id) {
-                    case 'add_book':
-                        targetName = 'book';
-                        break;
-                    default:
-                        return;
-                }
+                            <body>
+                                <p class="Form-Item-Label mt-4">ルーティン一覧</p>
+                            </body>
 
-                // オプションエレメントをクローンする
-                let $clone = getCloneOption(targetName + '_select_ary');
+                            @if (count($sortedProcedures) > 0)
+                            @foreach ($sortedProcedures as $groupIndex => $procedureGroup)
+                            @php
+                            $flowNumber = $groupIndex + 1;
+                            $routine = $matchingRoutines[$groupIndex];
+                            @endphp
 
-                // 追加先の要素を取得
-                let $targetElement = $(e.target).closest('.Form-Item');
-                if ($targetElement.next().length > 0) {
-                    $targetElement.next().after($clone);
-                } else {
-                    $targetElement.after($clone);
-                }
-            }
+                            <body>
+                                <p class="flex items-center text-lg font-extrabold dark:text-white">【ルーティン{{ $flowNumber }}】
+                                    {{ $routine->is_visible ? '表示中' : '非表示' }}
+                                </p>
+                                <button type="button" class="flex mb-4 ml-auto text-white bg-green-400 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded" onclick="window.location.href = '{{ route('task.procedure.routine_edit', ['id1' => $task->id, 'id2' => $routine->id]) }}'">編集</button>
+                            </body>
+                            <div class="relative m-3 flex flex-wrap mx-auto justify-left">
+                                <style>
+                                    .routine:hover p.text-base {
+                                        color: white;
+                                    }
+                                </style>
+                                @foreach ($procedureGroup as $index => $procedure)
+                                <div class="routine max-w-[320px] bg-white border border-gray-400 shadow-md rounded-3xl p-2 mx-1 my-3 cursor-pointer transition-colors duration-300 hover:bg-gray-500" onclick="#">
+                                    <div class="mt-2 pl-1 mb-1 flex items-start">
+                                        <div class="mt-2 pl-1 mb-1 hover-red-text">
+                                            <div>
+                                                <p class="text-base font-semibold text-gray-900 mb-0">手順{{ $index + 1 }}</p>
+                                                @if ($procedure)
+                                                <p class="text-base font-semibold text-gray-900 mb-0">{{ $procedure->name }}</p>
+                                                @else
+                                                <p class="text-base font-semibold text-gray-900 mb-0">手順が存在しません</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if ($index !== count($procedureGroup) - 1)
+                                <div class="flex justify-center items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+                                @endif
+                                @endforeach
+                            </div>
+                            @if ($groupIndex !== count($sortedProcedures) - 1 && !empty($sortedProcedures[$groupIndex + 1]))
+                            <hr>
+                            @endif
+                            @endforeach
+                            @else
+                            <section class="text-gray-600 body-font">
+                                <div class="container px-5 mx-auto mt-4">
+                                    現在、ルーティンの登録はありません。
+                                </div>
+                            </section>
+                            @endif
 
-            function getCloneOption(id) {
-                // クローンするオプションエレメントを取得
-                let $optionRow = $('#' + id).html();
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                // クローンを作成
-                let $clone = $('<div class="Form-Item">' + $optionRow + '</div>');
+        <!-- マニュアルを削除できるのはマネージャ以上 -->
+        @if (count($sortedProcedures) == 0)
+        @if(Auth::user()->role !== 9)
+        <div class="py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                return $clone;
-            }
+                    <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                        <div class="bg-opacity-25 mt-4">
+                            <div class="p-4">
 
-            function clickDeleteItem(e) {
-                $(e.target).closest('.Form-Item').remove();
-            }
-        </script>
+                                <p class="Form-Item-Label mt-4">手順削除：</p>
 
+                                <section class="text-gray-600 body-font">
+                                    <div class="container py-1 mx-auto flex flex-wrap">
+                                        <div class="lg:w-2/3 mx-auto">
+                                            <form method="POST" action="#">
+                                                @csrf
+                                                @method('delete')
+                                                <div class="flex justify-between my-4">
+                                                    <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                                    <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+        @endif
     </x-app-layout>

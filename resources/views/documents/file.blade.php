@@ -34,32 +34,31 @@
                     <div class="bg-opacity-25 mt-4">
                         <div class="p-4">
 
+                            <div class="mt-2 text-gray-500">
+                                テキストファイルを読み込んで、マニュアルを登録します。ファイルは複数選択可能です。</br>
+                                ファイル名がタイトルとして登録されます。
+                            </div>
+
                             <section class="text-gray-600 body-font">
                                 <div class="container py-5 mx-auto flex flex-wrap">
                                     <div class="lg:w-2/3 mx-auto">
 
-                                        <form method="POST" action="{{ route('document.store') }}">
+                                        <form method="POST" action="{{ route('document.file_store') }}" enctype="multipart/form-data">
                                             @csrf
                                             @method('post')
                                             <x-jet-validation-errors class="mb-4" />
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル名</p>
-                                                <input type="text" id="document_title" class="Form-Item-Input" name="document_title" :value="{{ old('document_title') }}" required>
-                                            </div>
-                                            <hr>
-
-                                            <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル内容</p>
-                                            </div>
-                                            <div class="flex flex-wrap w-full px-10 mb-4" style="background-color: #efefef; position: relative; height: 200px;">
-                                                <textarea id="document_details" name="document_details" class="absolute inset-0 w-full resize-none outline-none border-none bg-transparent" style="resize: none; background-color: #efefef;" required>{{ old('document_details') }}</textarea>
+                                                <span class="Form-Item-Label-Required">必須</span>
+                                                <label class="block">
+                                                    <input type="file" name="file[]" accept=".txt" multiple class="block w-full text-lg text-gray-500 file:mr-4 file:py-3 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600" />
+                                                </label>
                                             </div>
                                             <hr>
 
                                             <div class="Form-Item">
                                                 <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
-                                                <div class="Form-Item-RadioGroup mx-2">
+                                                <div class="Form-Item-RadioGroup">
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1"> 表示
                                                     </label>
@@ -75,7 +74,6 @@
                                                 <button type="submit" class="text-white bg-indigo-500 hover:bg-indigo-600 border-0 py-2 px-6 focus:outline-none rounded">登録</button>
                                             </div>
                                         </form>
-
                                     </div>
                                 </div>
                             </section>

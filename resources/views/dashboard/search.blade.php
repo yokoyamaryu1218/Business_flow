@@ -1,6 +1,6 @@
 <div x-data="{ showModal1: false, procedures: [], procedureId: null }">
     <x-app-layout>
-        @section('title', $title . ' / ' . 'businessflow')
+        @section('title', $title . ' / ' . config('app.name', 'Laravel'))
 
         <style>
             hr.dashed {
