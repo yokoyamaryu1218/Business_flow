@@ -14,6 +14,7 @@ class Procedures extends Component
     public $procedureId;
     public $documentId;
     protected $listeners = ['fetchProcedures'];
+    
     public function fetchProcedures($procedureId)
     {
         $this->procedures = []; // 変数を初期化

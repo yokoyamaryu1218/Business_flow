@@ -6,6 +6,32 @@ use App\Models\Procedure;
 
 class RoutineService
 {
+    // ルーティンの中身を書き換える
+    function sortProcedures($routines)
+    {
+        $sortedProcedures = [];
+
+        foreach ($routines as $routine) {
+            $sortedProcedure = [];
+
+            $sortedProcedure[] = Procedure::find($routine->previous_procedure_id);
+
+            if ($routine->next_procedure_ids !== null) {
+                $nextIds = explode(',', $routine->next_procedure_ids);
+
+                foreach ($nextIds as $nextId) {
+                    $sortedProcedure[] = Procedure::find($nextId);
+                }
+            }
+
+            $sortedProcedure[] = Procedure::find($routine->next_procedure_id);
+
+            $sortedProcedures[] = $sortedProcedure;
+        }
+
+        return $sortedProcedures;
+    }
+
     // 手順の順番を取得する関数
     public function numbering($procedureIds)
     {

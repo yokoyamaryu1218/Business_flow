@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Procedure;
 use App\Models\Document;
 use App\Models\ProcedureDocument;
+use App\Models\DocumentApprovals;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -242,16 +243,16 @@ class DocumentController extends Controller
     public function all_download()
     {
         $documents = Document::all();
-
+    
         // ZIPファイルを作成
         $zip = new ZipArchive();
         $zipFileName = tempnam(sys_get_temp_dir(), 'documents') . '.zip';
-
+        
         // ZIPファイルを開く
         if ($zip->open($zipFileName, ZipArchive::CREATE) !== true) {
             return response()->json(['error' => 'ZIPファイルを作成できませんでした。']);
         }
-
+    
         // documentsディレクトリ内のテキストファイルをZIPに追加
         foreach ($documents as $document) {
             $filePath = storage_path("app/documents/{$document->file_name}"); // Notice 'app' added to the path
@@ -259,19 +260,19 @@ class DocumentController extends Controller
                 $zip->addFile($filePath, $document->file_name);
             }
         }
-
+    
         // ZIPファイルを閉じる
         $zip->close();
-
+    
         // 作成したZIPファイルが存在するか確認
         if (!file_exists($zipFileName)) {
             return response()->json(['error' => 'ZIPファイルの作成に失敗しました。']);
         }
-
+    
         // ZIPファイルをクライアントに送信
         return response()->download($zipFileName)->deleteFileAfterSend(true);
     }
-
+    
 
     /**
      * Update the specified resource in storage.

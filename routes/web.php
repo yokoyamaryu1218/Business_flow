@@ -51,6 +51,7 @@ Route::middleware('can:user-higher')->group(function () {
 
     Route::get('/task/{id1}/procedure/{id2}', [ProcedureController::class, 'edit'])->name('task.procedure.edit');
     Route::post('/task/{id1}/procedure/{id2}', [ProcedureController::class, 'update'])->name('task.procedure.update');
+    Route::delete('/task/{id1}/procedure/{id2}', [ProcedureController::class, 'destroy'])->name('task.procedure.destroy');
 
     Route::get('/procedure/store/{id}', [ProcedureController::class, 'create'])->name('task.procedure.create');
     Route::post('/procedure/store/{id}', [ProcedureController::class, 'store'])->name('task.procedure.store');
@@ -60,7 +61,7 @@ Route::middleware('can:user-higher')->group(function () {
 
     Route::get('/task/{id1}/routine/{id2}', [RoutineController::class, 'index'])->name('task.procedure.routine_edit');
     Route::post('/task/{id}/routine', [RoutineController::class, 'update'])->name('task.procedure.routine_update');
-
+    
     Route::delete('/task/{id}/routine', [RoutineController::class, 'destroy'])->name('task.procedure.routine_delete');
 
     Route::get('/manual', [DocumentController::class, 'index'])->name('document.index');

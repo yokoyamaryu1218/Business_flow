@@ -260,6 +260,8 @@
                             <section class="text-gray-600 body-font">
                                 <div class="container py-1 mx-auto flex flex-wrap">
                                     <div class="lg:w-2/3 mx-auto">
+                                        @if(Auth::user()->role !== 9)
+                                        @if (count($sortedProcedures) === 0)
                                         <form method="POST" action="{{ route('task.destroy', ['task' => $task->id]) }}">
                                             @csrf
                                             @method('delete')
@@ -268,6 +270,12 @@
                                                 <button onclick="return confirm('作業に関連する手順も削除されます。\n本当に削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
                                             </div>
                                         </form>
+                                        @else
+                                        現在登録中のルーティンがあるため削除できません。
+                                        @endif
+                                        @else
+                                        削除権限がありません。
+                                        @endif
                                     </div>
                                 </div>
                             </section>

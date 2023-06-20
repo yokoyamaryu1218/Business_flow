@@ -14,13 +14,13 @@ class Dashboard extends Component
     public function mount()
     {
         $work_list = [];
-        $works = Task::all();
+        $works = Task::where('is_visible', 1)->get();
         foreach ($works as $work) {
             array_push($work_list, $work);
         }
 
         $document_list = [];
-        $documents = Document::all();
+        $documents = Document::where('is_visible', 1)->get();
         foreach ($documents as $document) {
             array_push($document_list, $document);
         }

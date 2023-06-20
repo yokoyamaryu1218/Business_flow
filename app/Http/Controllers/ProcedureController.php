@@ -130,13 +130,13 @@ class ProcedureController extends Controller
         return view('tasks.procedures.search', compact('title', 'search', 'search_list'));
     }
 
-
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\Document  $document
      * @return \Illuminate\Http\Response
      */
+
     public function procedure_search(Request $request, $id)
     {
         $title = "検索結果";
@@ -193,35 +193,22 @@ class ProcedureController extends Controller
         $routines = Routine::where('task_id', $task->id)->get();
 
         $matchingRoutines = [];
+        $targetProcedureId = $procedures->id;
 
         foreach ($routines as $routine) {
             // next_procedure_idsを配列に変換
-            $test1 = explode(',', $routine->next_procedure_ids);
+            $previousIds = explode(',', $routine->previous_procedure_id);
+            $nextIdsOption1 = explode(',', $routine->next_procedure_ids);
+            $nextIdsOption2 =  explode(',', $routine->next_procedure_id);
 
-            // $procedures->idと一致するかチェック
-            if (in_array($procedures->id, $test1)) {
-                // 一致する場合、$routineを$matchingRoutinesに追加
+            // previous_procedure_idまたはnext_procedure_idに一致するIDが含まれているかチェック
+            if (in_array($targetProcedureId, $previousIds) || in_array($targetProcedureId, $nextIdsOption1) || in_array($targetProcedureId, $nextIdsOption2)) {
                 $matchingRoutines[] = $routine;
             }
         }
 
-        foreach ($matchingRoutines as $routine) {
-            $sortedProcedure = [];
-
-            $sortedProcedure[] = Procedure::find($routine->previous_procedure_id);
-
-            if ($routine->next_procedure_ids !== null) {
-                $tests = explode(',', $routine->next_procedure_ids);
-
-                foreach ($tests as $test) {
-                    $sortedProcedure[] = Procedure::find($test);
-                }
-            }
-
-            $sortedProcedure[] = Procedure::find($routine->next_procedure_id);
-
-            $sortedProcedures[] = $sortedProcedure;
-        }
+        $routineSV = new RoutineService;
+        $sortedProcedures = $routineSV->sortProcedures($matchingRoutines);
 
         return view('procedures.edit', compact(
             'title',
@@ -312,8 +299,27 @@ class ProcedureController extends Controller
      * @param  \App\Models\Procedure  $procedure
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Procedure $procedure)
+    public function destroy($id1, $id2)
     {
-        //
+        $procedure = Procedure::findOrFail($id2);
+
+        DB::beginTransaction();
+
+        try {
+            // 関連する routines レコードを削除
+            $procedure->procedureDocument()->delete();
+
+            // Procedure の削除
+            $procedure->delete();
+
+            DB::commit();
+            session()->flash('status', '削除完了');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('alert', '削除エラー');
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return redirect()->route('task.edit', ['task' => $id1]);
     }
 }

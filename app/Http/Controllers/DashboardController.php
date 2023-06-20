@@ -45,26 +45,28 @@ class DashboardController extends Controller
      */
     public function task_details(Request $request, $id)
     {
-        $pagination = 10;
-        $page = $request->query('page', 1); // リクエストパラメータからページ番号を取得
-        $routinePage = $request->query('routine_page', 1);
+        $proceduresPagination = 10;  // Procedure のページネーション数
+        $routinesPagination = 5;     // Routine のページネーション数
+
+        $routinePage = $request->query('routine_page', 1); // リクエストパラメータからRoutineのページ番号を取得
 
         $task = Task::findOrFail($id);
 
-        $routine = Routine::where('task_id', $id)
+        // Procedure のページネーションを取得
+        $procedures = Procedure::where('task_id', $task->id)
             ->where('is_visible', 1)
-            ->get();
+            ->paginate($proceduresPagination);
+
+        $routines = Routine::where('task_id', $id)
+            ->where('is_visible', 1)
+            ->paginate($routinesPagination, ['*'], 'routine_page', $routinePage);
 
         $routineSV = new RoutineService;
-        $sortedProcedures = $routineSV->numbering($routine);
-
-        $paginationSV = new PaginationService;
-        $sortedProcedures = $paginationSV->paginateResults($sortedProcedures, $pagination, $page);
-        $sortedProcedures->appends(['routine_page' => $routinePage]);
+        $sortedProcedures = $routineSV->sortProcedures($routines);
 
         $title = $task->name . "手順一覧";
 
-        return view('dashboard.task.show', compact('title', 'task', 'routine', 'sortedProcedures'));
+        return view('dashboard.task.show', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures', 'routinePage'));
     }
 
     /**
@@ -126,7 +128,7 @@ class DashboardController extends Controller
      */
     public function documents()
     {
-        $documents = Document::where('is_visible', 1)->paginate(20);
+        $documents = Document::where('is_visible', 1)->paginate(10);
         $title = "マニュアル一覧";
         return view('dashboard.documents.index', compact('documents', 'title'));
     }

@@ -16,6 +16,7 @@ class Documents extends Component
     {
         $documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $procedureId)
+            ->where('documents.is_visible', 1)
             ->get();
 
         $this->documents = $documents;

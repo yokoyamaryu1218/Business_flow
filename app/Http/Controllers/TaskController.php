@@ -152,7 +152,7 @@ class TaskController extends Controller
         $sortedProcedures = $paginationSV->paginateResults($sortedProcedures, $pagination = 5, $page);
         $sortedProcedures->appends(['routine_page' => $routinePage]);
 
-        return view('tasks.edit', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures', 'procedurePage', 'routinePage'));
+        return view('tasks.edit', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures','procedurePage','routinePage'));
     }
 
     /**

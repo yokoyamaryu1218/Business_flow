@@ -131,7 +131,6 @@
     </div>
 
     <!-- マニュアルを削除できるのはマネージャ以上 -->
-    @if(Auth::user()->role !== 9)
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
@@ -145,6 +144,7 @@
                             <section class="text-gray-600 body-font">
                                 <div class="container py-1 mx-auto flex flex-wrap">
                                     <div class="lg:w-2/3 mx-auto">
+                                        @if(Auth::user()->role !== 9)
                                         <form method="POST" action="{{ route('document.destroy', ['document' => $document->id]) }}">
                                             @csrf
                                             @method('delete')
@@ -153,6 +153,9 @@
                                                 <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
                                             </div>
                                         </form>
+                                        @else
+                                        削除権限がありません。
+                                        @endif
                                     </div>
                                 </div>
                             </section>
@@ -162,5 +165,4 @@
             </div>
         </div>
     </div>
-    @endif
 </x-app-layout>
