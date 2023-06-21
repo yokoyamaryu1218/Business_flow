@@ -116,6 +116,6 @@
                 </div>
             </div>
         </div>
-        <script src="{{ asset('js/create-add-option.js') }}" defer></script>
+        <script src="{{ asset('js/procedure/create-add-option.js') }}" defer></script>
 
     </x-app-layout>

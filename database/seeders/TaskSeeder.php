@@ -22,6 +22,11 @@ class TaskSeeder extends Seeder
                     'name' => '育児',
                     'is_visible' => 1,
                 ],
+                [
+                    'id' => 2,
+                    'name' => '教育',
+                    'is_visible' => 1,
+                ],
             ],
         );
     }

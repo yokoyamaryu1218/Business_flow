@@ -1,6 +1,6 @@
 <x-jet-action-section>
     <x-slot name="title">
-        アカウント情報
+        アカウント削除
     </x-slot>
 
     <x-slot name="description">

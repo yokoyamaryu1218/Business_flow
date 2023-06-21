@@ -20,7 +20,7 @@ class Dashboard extends Component
         }
 
         $document_list = [];
-        $documents = Document::where('is_visible', 1)->get();
+        $documents = Document::where('is_visible', 1)->whereNotNull('approver_id')->get();
         foreach ($documents as $document) {
             array_push($document_list, $document);
         }

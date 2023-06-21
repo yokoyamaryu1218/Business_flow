@@ -130,6 +130,76 @@
         </div>
     </div>
 
+    <div class="hidden md:block py-4">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+                <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-2">
+                    <div class="bg-opacity-25 mt-4">
+                        <div class="p-4">
+
+                            <div class="flex items-center">
+
+                                <body>
+                                    <p class="Form-Item-Label mt-4">更新履歴：</p>
+                                </body>
+                            </div>
+
+                            <div class="my-2 text-gray-500">
+                                ダウンロードボタンから変更前の情報をダウンロードできます。
+                            </div>
+
+                            <section class="text-gray-600 body-font">
+                                <div class="container py-1 mx-auto flex flex-wrap">
+                                    <div class="lg:w-4/5 mx-auto">
+
+                                        @if (count($histories) > 0)
+                                        <section class="text-gray-600 body-font">
+                                            <div class="container px-5 py-1 mx-auto">
+                                                <table class="table-auto w-full text-left whitespace-no-wrap">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">処理</th>
+                                                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">更新日時</th>
+                                                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">更新者</th>
+                                                            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($histories as $index => $history)
+                                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ $history->process }}</td>
+                                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ $history->befored_at }}</td>
+                                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ $history->employee_name }}</td>
+                                                            <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
+                                                                @if($index !== 0)
+                                                                <a href="{{ route('document.history_download', ['document' => $document, 'id' => $history->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none hover:bg-green-600">ダウンロード</a>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </section>
+                                        @else
+                                        <section class="text-gray-600 body-font">
+                                            <div class="container px-5 py-1 mx-auto">
+                                                履歴はありません。
+                                            </div>
+                                        </section>
+                                        @endif
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- マニュアルを削除できるのはマネージャ以上 -->
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -138,26 +208,23 @@
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="bg-opacity-25 mt-4">
                         <div class="p-4">
-
                             <p class="Form-Item-Label mt-4">マニュアル削除：</p>
-
                             <section class="text-gray-600 body-font">
-                                <div class="container py-1 mx-auto flex flex-wrap">
-                                    <div class="lg:w-2/3 mx-auto">
-                                        @if(Auth::user()->role !== 9)
-                                        <form method="POST" action="{{ route('document.destroy', ['document' => $document->id]) }}">
-                                            @csrf
-                                            @method('delete')
-                                            <div class="flex justify-between my-4">
-                                                <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                                                <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
-                                            </div>
-                                        </form>
-                                        @else
-                                        削除権限がありません。
-                                        @endif
-                                    </div>
+                                <div class="container py-1 mx-auto">
+                                    @if(Auth::user()->role !== 9)
+                                    <form method="POST" action="{{ route('document.destroy', ['document' => $document->id]) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <div class="flex justify-between items-center my-4 lg:w-2/3 mx-auto"> <!-- lg:w-2/3 を追加し、justify-between から items-center に変更 -->
+                                            <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                            <button onclick="return confirm('選択したマニュアルを削除してもよろしいですか？')" type="submit" class="flex mb-4 text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                        </div>
+                                    </form>
+                                    @else
+                                    削除権限がありません。
+                                    @endif
                                 </div>
+
                             </section>
                         </div>
                     </div>

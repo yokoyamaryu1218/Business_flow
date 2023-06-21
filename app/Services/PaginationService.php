@@ -28,6 +28,7 @@ class PaginationService
         $total = $collection->count();
         $slicedProcedures = $collection->slice(($page - 1) * $perPage, $perPage);
 
+        // ページネーションされた手順を作成
         $paginatedProcedures = new LengthAwarePaginator(
             $slicedProcedures,
             $total,

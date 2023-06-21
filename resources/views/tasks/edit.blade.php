@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <script src="{{ asset('js/procedure/edit-sideMenu.js') }}" defer></script>
+        <script src="{{ asset('js/procedure/sideMenu.js') }}" defer></script>
 
         <!-- 元のコンテンツエリア -->
         <div class="w-full mx-auto pt-10 pb-4">

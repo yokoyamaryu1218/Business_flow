@@ -130,5 +130,5 @@
         var next_procedures_list = @json($next_procedures_list);
         var procedures_list = @json($procedure_list);
     </script>
-    <script src="{{ asset('js/routine-option.js') }}" defer></script>
+    <script src="{{ asset('js/routine/option.js') }}" defer></script>
 </x-app-layout>

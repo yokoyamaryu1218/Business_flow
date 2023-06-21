@@ -9,7 +9,6 @@ use App\Models\Procedure;
 use Illuminate\Http\Request;
 use App\Services\ProcedureService;
 use App\Services\DocumentService;
-use App\Services\PaginationService;
 use App\Services\RoutineService;
 use Illuminate\Support\Facades\DB;
 
@@ -55,10 +54,12 @@ class DashboardController extends Controller
         // Procedure のページネーションを取得
         $procedures = Procedure::where('task_id', $task->id)
             ->where('is_visible', 1)
+            ->whereNotNull('approver_id')
             ->paginate($proceduresPagination);
 
         $routines = Routine::where('task_id', $id)
             ->where('is_visible', 1)
+            ->whereNotNull('approver_id')
             ->paginate($routinesPagination, ['*'], 'routine_page', $routinePage);
 
         $routineSV = new RoutineService;
@@ -80,7 +81,9 @@ class DashboardController extends Controller
         $documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $id1)
             ->where('procedure_documents.document_id', $id2)
+            ->whereNotNull('approver_id')
             ->where('is_visible', 1)
+            ->select('documents.*')
             ->get();
 
         if ($documents->isEmpty()) {
@@ -89,15 +92,19 @@ class DashboardController extends Controller
 
         // 関連マニュアルを取得
         $manuals = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
+            ->join('documents as d', 'd.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $id1)
             ->where('procedure_documents.document_id', '!=', $id2)
-            ->where('documents.is_visible', 1)
+            ->where('d.is_visible', 1)
+            ->whereNotNull('d.approver_id')
             ->get();
 
         // 手順の情報を取得
         $procedure = Procedure::select('procedures.name', 'procedures.task_id', 'procedures.previous_procedure_id', 'procedures.next_procedure_ids', 'tasks.name AS task_name', 'procedures.is_visible')
             ->join('tasks', 'procedures.task_id', '=', 'tasks.id')
             ->where('procedures.id', $id1)
+            ->where('procedures.is_visible', 1)
+            ->whereNotNull('approver_id')
             ->first();
 
         $previousProcedureIds = [];
@@ -119,7 +126,6 @@ class DashboardController extends Controller
         return view('dashboard.procedures.show', compact('title', 'documents', 'manuals', 'procedure', 'previousProcedureIds', 'nextProcedureIds', 'fileContents'));
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -128,7 +134,7 @@ class DashboardController extends Controller
      */
     public function documents()
     {
-        $documents = Document::where('is_visible', 1)->paginate(10);
+        $documents = Document::where('is_visible', 1)->paginate(20);
         $title = "マニュアル一覧";
         return view('dashboard.documents.index', compact('documents', 'title'));
     }
@@ -141,11 +147,9 @@ class DashboardController extends Controller
      */
     public function documents_details($id)
     {
-        $documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
-            ->where('procedure_documents.document_id', $id)
-            ->get();
+        $documents = Document::find($id);
 
-        if (count($documents) === 0) {
+        if (!$documents) {
             abort(404); // URLからアクセス不可にする
         };
 
@@ -155,13 +159,15 @@ class DashboardController extends Controller
             ->leftJoin('procedure_documents', 'procedures.id', '=', 'procedure_documents.procedure_id')
             ->leftJoin('tasks', 'procedures.task_id', '=', 'tasks.id')
             ->where('procedure_documents.document_id', $id)
+            ->whereNotNull('approver_id')
+            ->where('procedures.is_visible', 1)
             ->get();
 
         // テキストファイルの内容を取得する
         $documentSV = new DocumentService;
-        $fileContents = $documentSV->getContents($documents[0]->file_name);
+        $fileContents = $documentSV->getContents($documents->file_name);
 
-        $title = $documents[0]->title;
+        $title = $documents->title;
 
         return view('dashboard.documents.show', compact('documents', 'fileContents', 'procedures', 'title'));
     }
@@ -186,18 +192,21 @@ class DashboardController extends Controller
 
         if (!empty($search)) {
             $query = Document::where('title', 'like', '%' . $search . '%')
+                ->whereNotNull('approver_id')
                 ->where('is_visible', 1);
 
             if (is_array($search_target) && count($search_target) > 0) {
                 if (in_array('task', $search_target)) {
                     $task = Task::where('name', 'like', '%' . $search . '%')
                         ->where('is_visible', 1)
+                        ->whereNotNull('approver_id')
                         ->paginate(10, ['*'], 'task_page', $taskPage);
                     $search_list['task'] = $task;
                 }
                 if (in_array('procedure', $search_target)) {
                     $procedure = Procedure::where('name', 'like', '%' . $search . '%')
                         ->where('is_visible', 1)
+                        ->whereNotNull('approver_id')
                         ->paginate(10, ['*'], 'procedure_page', $procedurePage);
                     $search_list['procedure'] = $procedure;
                 }
@@ -208,9 +217,11 @@ class DashboardController extends Controller
                 // 検索対象が指定されていない場合、全ての対象で検索
                 $task = Task::where('name', 'like', '%' . $search . '%')
                     ->where('is_visible', 1)
+                    ->whereNotNull('approver_id')
                     ->paginate(10, ['*'], 'task_page', $taskPage);
                 $procedure = Procedure::where('name', 'like', '%' . $search . '%')
                     ->where('is_visible', 1)
+                    ->whereNotNull('approver_id')
                     ->paginate(10, ['*'], 'procedure_page', $procedurePage);
                 $document = $query->paginate(10, ['*'], 'document_page', $documentPage);
 

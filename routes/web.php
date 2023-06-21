@@ -4,8 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoutineController;
+use App\Http\Controllers\ApprovalsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,7 @@ Route::get('/forgot-password', function () {
 Route::get('/', function () {
     return view('dashboard');
 });
+
 
 Route::middleware('can:user-higher')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -73,8 +76,32 @@ Route::middleware('can:user-higher')->group(function () {
     Route::get('/manual/download/{document}', [DocumentController::class, 'file_download'])->name('document.file_download');
     Route::get('/manual/download-all-documents', [DocumentController::class, 'all_download'])->name('document.all_download');
     Route::get('/manual/{document}', [DocumentController::class, 'edit'])->name('document.edit');
+    Route::get('/manual/{document}/history/{id}', [DocumentController::class, 'history_download'])->name('document.history_download');
+
     Route::post('/manual/{document}', [DocumentController::class, 'update'])->name('document.update');
     Route::delete('/manual/{document}', [DocumentController::class, 'destroy'])->name('document.destroy');
+
+    Route::get('/approval', [ApprovalsController::class, 'index'])->name('approval.index');
+    Route::get('/approved', [ApprovalsController::class, 'approved'])->name('approval.approved');
+
+    Route::get('/approval/{documents}', [ApprovalsController::class, 'document_edit'])->name('approval.document_edit');
+    Route::post('/approval/{documents}', [ApprovalsController::class, 'document_update'])->name('approval.document_update');
+
+    Route::get('/approval/routine/{routines}', [ApprovalsController::class, 'routine_edit'])->name('approval.routine_edit');
+    Route::post('/approval/routine/{routines}', [ApprovalsController::class, 'routine_update'])->name('approval.routine_update');
+
+    Route::get('/approval/procedure/{procedures}', [ApprovalsController::class, 'procedure_edit'])->name('approval.procedure_edit');
+    Route::post('/approval/procedure/{procedures}', [ApprovalsController::class, 'procedure_update'])->name('approval.procedure_update');
+});
+
+Route::middleware('can:admin')->group(function () {
+    Route::get('/employee', [UsersController::class, 'index'])->name('user.index');
+    Route::get('/employee/store', [UsersController::class, 'create'])->name('user.create');
+    Route::post('/employee/store', [UsersController::class, 'store'])->name('user.store');
+    Route::get('/employee/{id}', [UsersController::class, 'edit'])->name('user.edit');
+    Route::post('/employee/{id}', [UsersController::class, 'update'])->name('user.update');
+    Route::post('/employee/password/{id}', [UsersController::class, 'password_update'])->name('user.password_update');
+    Route::delete('/employee/{id}', [UsersController::class, 'destroy'])->name('user.destroy');
 });
 
 Route::get('/task_list', [DashboardController::class, 'tasks'])->name('dashboard.tasks');

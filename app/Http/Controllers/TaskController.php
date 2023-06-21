@@ -6,12 +6,11 @@ use App\Models\Task;
 use App\Models\Procedure;
 use App\Models\Routine;
 use Illuminate\Support\Carbon;
-use Illuminate\Http\Request; // 追加
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProcedureDocument;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
-use App\Services\ProcedureService;
 use App\Services\PaginationService;
 
 class TaskController extends Controller
@@ -35,6 +34,7 @@ class TaskController extends Controller
 
         $procedures = Procedure::leftJoin('tasks', 'procedures.task_id', '=', 'tasks.id')
             ->select('procedures.id', 'procedures.name', 'procedures.is_visible', 'tasks.name as task_name', 'procedures.task_id')
+            ->whereNotNull('approver_id')
             ->paginate(10, ['*'], 'procedure_page', $procedurePage);
 
         return view('tasks.index', compact('title', 'tasks', 'procedures', 'taskPage', 'procedurePage'));
@@ -124,9 +124,9 @@ class TaskController extends Controller
         $routinePage = $request->query('routine_page', 1);
 
         $task = Task::findOrFail($task->id);
-        $procedures = Procedure::where('task_id', $task->id)->paginate(10, ['*'], 'product_page', $procedurePage);
+        $procedures = Procedure::where('task_id', $task->id)->whereNotNull('approver_id')->paginate(10, ['*'], 'product_page', $procedurePage);
 
-        $routines = Routine::where('task_id', $task->id)->get();
+        $routines = Routine::where('task_id', $task->id)->whereNotNull('approver_id')->get();
 
         $sortedProcedures = [];
 
@@ -152,7 +152,7 @@ class TaskController extends Controller
         $sortedProcedures = $paginationSV->paginateResults($sortedProcedures, $pagination = 5, $page);
         $sortedProcedures->appends(['routine_page' => $routinePage]);
 
-        return view('tasks.edit', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures','procedurePage','routinePage'));
+        return view('tasks.edit', compact('title', 'task', 'procedures', 'routines', 'sortedProcedures', 'procedurePage', 'routinePage'));
     }
 
     /**

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('next_procedure_ids')->nullable();
             $table->unsignedBigInteger('next_procedure_id')->nullable();
             $table->boolean('is_visible');
+            $table->unsignedBigInteger('approver_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
         
             $table->foreign('task_id')->references('id')->on('tasks');

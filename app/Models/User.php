@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
@@ -24,10 +25,11 @@ class User extends Authenticatable
      * @var string[]
      */
     protected $fillable = [
+        'employee_number',
         'name',
-        'email',
         'password',
         'role',
+        'last_login_at',
     ];
 
     /**

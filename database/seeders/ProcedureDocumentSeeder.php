@@ -52,6 +52,26 @@ class ProcedureDocumentSeeder extends Seeder
                 'procedure_id' => 5,
                 'document_id' => 7,
             ],
+            [
+                'procedure_id' => 6,
+                'document_id' => 8,
+            ],
+            [
+                'procedure_id' => 7,
+                'document_id' => 9,
+            ],
+            [
+                'procedure_id' => 8,
+                'document_id' => 10,
+            ],
+            [
+                'procedure_id' => 9,
+                'document_id' => 11,
+            ],
+            [
+                'procedure_id' => 10,
+                'document_id' => 12,
+            ],
         ];
 
         foreach ($procedureDocuments as $procedureDocument) {

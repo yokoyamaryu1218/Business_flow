@@ -59,6 +59,7 @@
                                         <div class="lg:w-4/5 mx-auto">
                                             <h2 class="mt-4 mb-8 text-xl text-gray-900 font-medium title-font">■マニュアル名：{{ $documents[0]->title }}</h2>
                                             <p class="mb-8 leading-relaxed">{!! nl2br(e($fileContents)) !!}</p>
+                                            <div class="font-semibold text-right text-sm">最終更新日：{{ date('Y-m-d', strtotime($documents[0]->updated_at)) }}</div>
                                         </div>
                                     </div>
                                     <div class="flex justify-between">

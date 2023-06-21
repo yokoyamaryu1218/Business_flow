@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Document;
 use App\Models\ProcedureDocument;
+use App\Models\ProcedureApprovals;
 use App\Models\Routine;
 use App\Models\Procedure;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProcedureRequest;
@@ -24,7 +26,6 @@ class ProcedureController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -77,7 +78,9 @@ class ProcedureController extends Controller
             $documents
         );
 
-        return redirect()->route('task.edit', ['task' => $task_id]);
+        return (Auth::user()->role !== 9)
+            ? redirect()->route('task.index')
+            : redirect()->route('approval.index');
     }
 
     /**
@@ -98,7 +101,9 @@ class ProcedureController extends Controller
             $documents
         );
 
-        return redirect()->route('task.index');
+        return (Auth::user()->role !== 9)
+            ? redirect()->route('task.index')
+            : redirect()->route('approval.index');
     }
 
     /**
@@ -136,7 +141,6 @@ class ProcedureController extends Controller
      * @param  \App\Models\Document  $document
      * @return \Illuminate\Http\Response
      */
-
     public function procedure_search(Request $request, $id)
     {
         $title = "検索結果";
@@ -190,7 +194,7 @@ class ProcedureController extends Controller
             ->get();
 
         // Routineの取得
-        $routines = Routine::where('task_id', $task->id)->get();
+        $routines = Routine::where('task_id', $task->id)->whereNotNull('approver_id')->get();
 
         $matchingRoutines = [];
         $targetProcedureId = $procedures->id;
@@ -308,6 +312,7 @@ class ProcedureController extends Controller
         try {
             // 関連する routines レコードを削除
             $procedure->procedureDocument()->delete();
+            ProcedureApprovals::where('procedure_id', $procedure->id)->delete();
 
             // Procedure の削除
             $procedure->delete();

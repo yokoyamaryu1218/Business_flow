@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Routine;
 use App\Models\Procedure;
+use App\Models\RoutineApprovals;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreRoutineRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Services\RoutineService;
 
 class RoutineController extends Controller
@@ -88,90 +90,68 @@ class RoutineController extends Controller
     {
         $routineSV = new RoutineService;
         $result = $routineSV->numbering($request->input('procedure_id'));
-
+    
         if ($result === false) {
             return redirect()->back()->withErrors(['previous_procedure_id' => '手順を重複して選択しています。']);
         }
-
+    
         $procedureIds = $result;
-
         $previous_procedure_id = reset($procedureIds);
-
         $next_procedure_ids = null;
         $next_procedure_id = null;
-
+    
         if (count($procedureIds) > 1) {
             $next_procedure_id = end($procedureIds);
-
+    
             if (count($procedureIds) > 2) {
                 $next_procedure_ids = implode(',', array_slice($procedureIds, 1, -1));
             }
         }
-
+    
+        DB::beginTransaction();
+    
         try {
+            $approver_id = (Auth::user()->role !== 9) ? Auth::user()->employee_number : null;
+    
             $routine = Routine::create([
                 'task_id' => $request['task_id'],
                 'previous_procedure_id' => $previous_procedure_id,
                 'next_procedure_ids' => $next_procedure_ids,
                 'next_procedure_id' => $next_procedure_id,
                 'is_visible' => $request['is_visible'],
+                'approver_id' => $approver_id,
+                'creator_id' => Auth::user()->employee_number,
             ]);
-
-            // Routineテーブルからレコードを取得
-            $routines = Routine::where('id', $routine->id)->get();
-
-            // ルーティンに含まれるプロシージャの情報を取得
-            foreach ($routines as $routine) {
-                $procedureIds = [];
-                $procedureIds[] = $routine->previous_procedure_id;
-
-                if ($routine->next_procedure_ids !== null) {
-                    $nextProcedureIds = explode(',', $routine->next_procedure_ids);
-                    $procedureIds = array_merge($procedureIds, $nextProcedureIds);
+    
+            if (Auth::user()->role !== 9) {
+                $routineSV = new RoutineService;
+                $result = $routineSV->createRoutine($routine);
+    
+                if (!$result) {
+                    throw new \Exception('登録エラー');
                 }
+            } else {
+                RoutineApprovals::create([
+                    'routine_id' => $routine->id,
+                    'creator_id' => Auth::user()->employee_number,
+                    'approved' => 0, // 0：申請中、1：承認、2：否認、3：取り下げ
+                    'approval_at' => null,
+                ]);
 
-                $procedureIds[] = $routine->next_procedure_id;
-
-                $procedureRecords = Procedure::whereIn('id', $procedureIds)->get()->toArray();
-                $procedures = $procedureRecords;
+                session()->flash('status', '更新完了');
             }
-
-            // ルーチンのnext_procedure_idsがnullかどうかをチェックし、それに応じてProcedureを更新します
-            if ($routine->next_procedure_ids === null) {
-                // ルーチンからprevious_procedure_idとnext_procedure_idを取得します
-                $prevProcIdInRoutine = $routine->previous_procedure_id;
-                $nextProcIdInRoutine = $routine->next_procedure_id;
-                // 対応するIDを持つProcedureを検索します
-                $prevProcedure = Procedure::find($prevProcIdInRoutine);
-                $nextProcedure = Procedure::find($nextProcIdInRoutine);
-
-                if ($prevProcedure && $nextProcedure) {
-                    // 前の手順のnext_procedure_idsを更新します
-                    $nextProcedureIdsForPrevProc = explode(',', $prevProcedure->next_procedure_ids);
-                    if (!in_array($nextProcIdInRoutine, $nextProcedureIdsForPrevProc)) {
-                        $nextProcedureIdsForPrevProc[] = $nextProcIdInRoutine;
-                        $prevProcedure->next_procedure_ids = implode(',', $nextProcedureIdsForPrevProc);
-                        $prevProcedure->save();
-                    }
-
-                    // 次の手順のprevious_procedure_idを更新します
-                    $prevProcedureIdsForNextProc = explode(',', $nextProcedure->previous_procedure_id);
-                    if (!in_array($prevProcIdInRoutine, $prevProcedureIdsForNextProc)) {
-                        $prevProcedureIdsForNextProc[] = $prevProcIdInRoutine;
-                        $nextProcedure->previous_procedure_id = implode(',', $prevProcedureIdsForNextProc);
-                        $nextProcedure->save();
-                    }
-                }
-            }
-
-            session()->flash('status', '登録完了');
+    
+            DB::commit();
+            session()->flash('status', '更新完了');
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('alert', '登録エラー');
-            // return response()->json(['error' => $e->getMessage()], 500);
         }
-        return redirect()->route('task.edit', ['task' => $routine->task_id]);
-    }
+    
+        return (Auth::user()->role !== 9)
+            ? redirect()->route('task.edit', ['task' => $routine->task_id])
+            : redirect()->route('approval.index');
+    }    
 
     /**
      * Display the specified resource.
@@ -469,7 +449,8 @@ class RoutineController extends Controller
                     }
                 }
             }
-            
+
+            RoutineApprovals::where('routine_id', $routines->id)->delete();
             // 最後に、指定されたRoutineエントリを削除
             $routineToDelete->delete();
 
@@ -482,6 +463,7 @@ class RoutineController extends Controller
         }
 
         $request->session()->forget('routines');
+
         return redirect()->route('task.edit', ['task' => $id]);
     }
 }

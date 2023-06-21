@@ -41,6 +41,7 @@ class Procedures extends Component
     {
         $documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $documentId)
+            ->whereNotNull('documents.approver_id')
             ->get();
 
         $this->documents = $documents;

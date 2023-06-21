@@ -84,7 +84,7 @@
                                                 <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>関連するマニュアル</p>
                                                 <select name="document_id[]" class="Form-Item-Input">
                                                     <option value="">マニュアルを選択してください</option>
-                                                    @foreach ($procedure_list as $procedure)
+                                                    @foreach ($documents_list as $procedure)
                                                     <option value="{{ $procedure['id'] }}" {{ old('document_id') && in_array($procedure['id'], old('document_id')) ? 'selected' : '' }}>{{ $procedure['title'] }}</option>
                                                     @endforeach
                                                 </select>
@@ -124,6 +124,6 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/create-add-option.js') }}" defer></script>
+    <script src="{{ asset('js/procedure/create-add-option.js') }}" defer></script>
 
 </x-app-layout>

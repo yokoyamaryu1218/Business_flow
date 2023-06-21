@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <script src="{{ asset('js/procedure/index-sideMenu.js') }}" defer></script>
+        <script src="{{ asset('js/procedure/sideMenu.js') }}" defer></script>
 
         <!-- 元のコンテンツエリア -->
         <div class="w-full mx-auto pt-10 pb-4">
@@ -122,7 +122,6 @@
                     <div class="p-4">
 
                         <div class="flex items-center">
-
                             <body>
                                 <h2 class="flex items-center text-2xl  font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
                                     登録手順一覧

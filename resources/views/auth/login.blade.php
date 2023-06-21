@@ -2,7 +2,7 @@
     <x-jet-authentication-card>
         <x-slot name="logo">
             <div class="w-20">
-                <img class="mr-1" src="data:image/png;base64,{{Config::get('base64.logo1')}}">
+                <img class="mr-1" src="data:image/png;base64,{{Config::get('base64.loginLogo')}}">
             </div>
         </x-slot>
 
@@ -18,8 +18,8 @@
             @csrf
 
             <div>
-                <x-jet-label for="email" value="メールアドレス" />
-                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+                <x-jet-label for="employee_number" value="社員番号" />
+                <x-jet-input id="employee_number" class="block mt-1 w-full" type="text" name="employee_number" :value="old('employee_number')" required autofocus />
             </div>
 
             <div class="mt-4">
@@ -35,12 +35,6 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                    パスワードをお忘れですか？
-                </a>
-                @endif
-
                 <x-jet-button class="ml-4">
                     ログイン
                 </x-jet-button>

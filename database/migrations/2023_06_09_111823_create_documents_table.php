@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('file_name');
             $table->boolean('is_visible');
+            $table->unsignedBigInteger('approver_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
         });
     }

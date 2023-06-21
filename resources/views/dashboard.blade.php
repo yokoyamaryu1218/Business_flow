@@ -1,4 +1,4 @@
-<x-app-layout>
+    <x-app-layout>
         <x-slot name="header">
             <h2 class="font-semibold text-base text-gray-800 leading-tight">
                 業務サポート情報

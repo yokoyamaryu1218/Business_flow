@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/procedure/procedures-sideMenu.js') }}" defer></script>
+    <script src="{{ asset('js/procedure/sideMenu.js') }}" defer></script>
 
     <!-- 元のコンテンツエリア -->
     <div class="w-full mx-auto pt-10 pb-4">
@@ -244,7 +244,7 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/create-add-option.js') }}" defer></script>
+    <script src="{{ asset('js/procedure/create-add-option.js') }}" defer></script>
 
     <div class="w-full mx-auto py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -319,37 +319,34 @@
     </div>
 
     <!-- マニュアルを削除できるのはマネージャ以上 -->
-    <div class="w-full mx-auto py-4">
+    <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-3">
                     <div class="bg-opacity-25 mt-4">
                         <div class="p-4">
-
                             <p class="Form-Item-Label mt-4">手順削除：</p>
-
                             <section class="text-gray-600 body-font">
-                                <div class="container py-1 mx-auto flex flex-wrap">
-                                    <div class="lg:w-2/3 mx-auto">
-                                        @if(Auth::user()->role !== 9)
-                                        @if (count($sortedProcedures) === 0)
-                                        <form method="POST" action="{{ route('task.procedure.destroy', ['id1' => $procedures->task_id, 'id2' => $procedures->id]) }}">
-                                            @csrf
-                                            @method('delete')
-                                            <div class="flex justify-between my-4">
-                                                <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                                                <button onclick="return confirm('選択した手順を削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
-                                            </div>
-                                        </form>
-                                        @else
-                                        現在登録中のルーティンがあるため削除できません。
-                                        @endif
-                                        @else
-                                        削除権限がありません。
-                                        @endif
-                                    </div>
+                                <div class="container py-1 mx-auto">
+                                    @if(Auth::user()->role !== 9)
+                                    @if (count($sortedProcedures) === 0)
+                                    <form method="POST" action="{{ route('task.procedure.destroy', ['id1' => $procedures->task_id, 'id2' => $procedures->id]) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <div class="flex justify-between items-center my-4 lg:w-2/3 mx-auto"> <!-- lg:w-2/3 を追加し、justify-between から items-center に変更 -->
+                                            <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                            <button onclick="return confirm('選択した手順を削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                        </div>
+                                    </form>
+                                    @else
+                                    現在登録中のルーティンがあるため削除できません。
+                                    @endif
+                                    @else
+                                    削除権限がありません。
+                                    @endif
                                 </div>
+
                             </section>
                         </div>
                     </div>

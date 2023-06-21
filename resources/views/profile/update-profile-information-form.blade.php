@@ -1,10 +1,10 @@
 <x-jet-form-section submit="updateProfileInformation">
     <x-slot name="title">
-        アカウント情報
+        社員情報
     </x-slot>
 
     <x-slot name="description">
-        アカウントのプロフィール情報、メールアドレスを更新します。
+        <!-- ここに説明文を入力 -->
     </x-slot>
 
     <x-slot name="form">
@@ -51,25 +51,8 @@
         <!-- Name -->
         <div class="col-span-6 sm:col-span-4">
             <x-jet-label for="name" value="お名前" />
-            <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.defer="state.name" autocomplete="name" />
+            <x-jet-input id="name" type="text" class="mt-1 block w-full" wire:model.defer="state.name" autocomplete="name" readonly />
             <x-jet-input-error for="name" class="mt-2" />
         </div>
-
-        <!-- Email -->
-        <div class="col-span-6 sm:col-span-4">
-            <x-jet-label for="email" value="メールアドレス" />
-            <x-jet-input id="email" type="email" class="mt-1 block w-full" wire:model.defer="state.email" />
-            <x-jet-input-error for="email" class="mt-2" />
-        </div>
-    </x-slot>
-
-    <x-slot name="actions">
-        <x-jet-action-message class="mr-3" on="saved">
-            保存しました。
-        </x-jet-action-message>
-
-        <x-jet-button wire:loading.attr="disabled" wire:target="photo">
-            保存
-        </x-jet-button>
     </x-slot>
 </x-jet-form-section>

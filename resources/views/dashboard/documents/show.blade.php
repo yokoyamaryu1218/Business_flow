@@ -45,8 +45,9 @@
                                 <div class="lg:w-4/5 mx-auto">
                                     <div class="flex flex-wrap w-full py-10 px-10 relative mb-4" style="background-color: #efefef;">
                                         <div class="lg:w-4/5 mx-auto">
-                                            <h2 class="mt-4 mb-8 text-xl text-gray-900 font-medium title-font">■マニュアル名：{{ $documents[0]->title }}</h2>
+                                            <h2 class="mt-4 mb-8 text-xl text-gray-900 font-medium title-font">■マニュアル名：{{ $documents->title }}</h2>
                                             <p class="mb-8 leading-relaxed">{!! nl2br(e($fileContents)) !!}</p>
+                                            <div class="font-semibold text-right text-sm">最終更新日：{{ date('Y-m-d', strtotime($documents->updated_at)) }}</div>
                                         </div>
                                     </div>
 
@@ -59,7 +60,7 @@
                                     @foreach($procedures as $procedure)
                                     <div class="flex mt-4 ml-5 items-center">
                                         <img class="w-5 mr-1" src="data:image/png;base64,{{Config::get('base64.comment')}}">
-                                        <a href="{{ route('dashboard.procedures', ['id1' => $procedure->id, 'id2' => $documents[0]->document_id]) }}'" class="text-gray-500 hover:text-red-500 hover:underline">
+                                        <a href="{{ route('dashboard.procedures', ['id1' => $procedure->id, 'id2' => $documents->id]) }}'" class="text-gray-500 hover:text-red-500 hover:underline">
                                             {{ $procedure->task_name}}・{{ $procedure->name }}
                                         </a>
                                     </div>

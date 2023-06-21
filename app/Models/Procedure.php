@@ -22,6 +22,8 @@ class Procedure extends Model
         'previous_procedure_id',
         'next_procedure_ids',
         'is_visible',
+        'creator_id',
+        'approver_id',
     ];
 
     public function procedureDocument()

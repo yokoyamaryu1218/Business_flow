@@ -66,6 +66,25 @@
                 </x-jet-nav-link>
             </div>
 
+            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <x-jet-nav-link href="{{ route('approval.index') }}" :active="request()->routeIs('approval.*')">
+                    @can('user')
+                    申請一覧
+                    @endcan
+                    @can('manager-higher')
+                    承認管理
+                    @endcan
+                </x-jet-nav-link>
+            </div>
+
+            @can('admin')
+            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <x-jet-nav-link href="{{ route('user.index') }}" :active="request()->routeIs('user.*')">
+                    人員管理
+                </x-jet-nav-link>
+            </div>
+            @endcan
+
         </div>
 
         <div class="hidden sm:flex sm:items-center sm:ml-6">

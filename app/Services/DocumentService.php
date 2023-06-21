@@ -13,9 +13,9 @@ class DocumentService
     {
         // ドキュメントナンバーの各部分を分割
         $parts = explode('-', $number);
-        $letterPart = $parts[0];
-        $numberPart = intval($parts[1]);
-        $subNumberPart = intval($parts[2]);
+        $letterPart = $parts[0]; // ドキュメントナンバーのアルファベット部分
+        $numberPart = intval($parts[1]); // ドキュメントナンバーの数字部分
+        $subNumberPart = intval($parts[2]); // ドキュメントナンバーのサブナンバー部分
 
         if ($subNumberPart < 9) {
             // サブナンバーが9未満の場合、次のサブナンバーを生成
@@ -29,11 +29,10 @@ class DocumentService
         // 新しいドキュメントナンバーを作成
         $newDocumentNumber = sprintf('%s-%d-%d', $letterPart, $numberPart, $subNumberPart);
 
-
         return $newDocumentNumber;
     }
 
-    public function savaDocument($number, $details)
+    public function saveText($number, $details)
     {
         // ファイルの保存先パスを生成
         $filePath = 'documents/' . $number . '.txt';
@@ -64,5 +63,4 @@ class DocumentService
 
         return new Response($fileContents, 200, $headers);
     }
-    
 }

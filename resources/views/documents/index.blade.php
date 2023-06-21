@@ -76,6 +76,7 @@
                                                 <tr>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">ナンバー</th>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">タイトル</th>
+                                                    <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">最終更新日</th>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">公開設定</th>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100"></th>
                                                 </tr>
@@ -85,6 +86,7 @@
                                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                                     <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ $document->document_number }}</td>
                                                     <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ $document->title }}</td>
+                                                    <td class="font-medium border-t-2 border-gray-200 px-4 py-3">{{ date('Y-m-d', strtotime($document->updated_at)) }}</td>
                                                     <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
                                                         @if ($document->is_visible)
                                                         表示中

@@ -20,6 +20,7 @@ class Routine extends Model
         'next_procedure_ids',
         'next_procedure_id',
         'is_visible',
-
+        'approver_id',
+        'creator_id',
     ];
 }
