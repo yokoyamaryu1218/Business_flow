@@ -13,7 +13,7 @@ class StoreDocumentApprovalsRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**

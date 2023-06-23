@@ -52,10 +52,13 @@
                                                 <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
                                                 <div class="Form-Item-RadioGroup">
                                                     <label>
-                                                        <input type="radio" name="is_visible" value="1"> 表示
+                                                        <input type="radio" name="is_visible" value="1" checked /> 表示
                                                     </label>
-                                                    <label>
-                                                        <input type="radio" name="is_visible" value="0" checked /> 非表示
+                                                    <label class="hidden md:block">
+                                                        <input type="radio" name="is_visible" value="0" /> 非表示
+                                                    </label>
+                                                    <label class="md:hidden ml-20">
+                                                        <input type="radio" name="is_visible" value="0" /> 非表示
                                                     </label>
                                                 </div>
                                             </div>

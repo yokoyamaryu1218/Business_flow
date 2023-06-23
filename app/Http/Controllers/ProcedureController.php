@@ -37,8 +37,8 @@ class ProcedureController extends Controller
     {
         $title = "手順新規登録";
         $task = Task::findOrFail($id);
-        $procedure_list = Procedure::all();
-        $documents_list = Document::all();
+        $procedure_list = Procedure::whereNotNull('approver_id')->get();
+        $documents_list = Document::whereNotNull('approver_id')->get();
 
         return view('procedures.create', compact('title', 'task', 'procedure_list', 'documents_list'));
     }
@@ -52,9 +52,9 @@ class ProcedureController extends Controller
     {
         $title = "手順新規登録";
         $task_list = Task::all();
-        $procedure_list = Procedure::all();
-        $documents_list = Document::all();
-
+        $procedure_list = Procedure::whereNotNull('approver_id')->get();
+        $documents_list = Document::whereNotNull('approver_id')->get();
+        
         return view('tasks.procedures.create', compact('title', 'task_list', 'procedure_list', 'documents_list'));
     }
 
@@ -71,6 +71,10 @@ class ProcedureController extends Controller
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
 
+        if($documents === false){
+            return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
+        }
+        
         $procedureSV->createProcedure(
             $request->input('name'),
             $task_id,
@@ -93,6 +97,10 @@ class ProcedureController extends Controller
     {
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
+
+        if($documents === false){
+            return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
+        }
 
         $procedureSV->createProcedure(
             $request->input('name'),
@@ -186,8 +194,8 @@ class ProcedureController extends Controller
         $previousProcedureIds = $procedureSV->separateCharacters($procedures->previous_procedure_id); // 前の手順
         $nextProcedureIds = $procedureSV->separateCharacters($procedures->next_procedure_ids); // 次の手順
 
-        $procedure_list = Procedure::all();
-        $documents_list = Document::all();
+        $procedure_list = Procedure::whereNotNull('approver_id')->get();
+        $documents_list = Document::whereNotNull('approver_id')->get();
 
         $my_documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $procedures->id)

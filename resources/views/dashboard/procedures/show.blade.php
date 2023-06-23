@@ -6,7 +6,7 @@
         <x-slot name="header">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
-                    <a href="/" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white">
+                    <a href="/" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white pankuzu-text">
                         業務サポート情報
                     </a>
                 </li>
@@ -15,7 +15,7 @@
                         <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <a href="{{ route('dashboard.tasks') }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white">
+                        <a href="{{ route('dashboard.tasks') }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white pankuzu-text">
                             作業一覧
                         </a>
                     </div>
@@ -25,7 +25,7 @@
                         <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <a href="{{ route('dashboard.task_details', ['id' => $procedure->task_id]) }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white">
+                        <a href="{{ route('dashboard.task_details', ['id' => $procedure->task_id]) }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white pankuzu-text">
                             {{ $procedure->task_name }}手順一覧
                         </a>
                     </div>
@@ -35,7 +35,7 @@
                         <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                         </svg>
-                        <span class="ml-1 text-base font-semibold md:ml-2">
+                        <span class="ml-1 text-base font-semibold md:ml-2 pankuzu-text">
                             {{ $title }}
                         </span>
                     </div>
@@ -48,7 +48,7 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
                     <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
-                        <div class="mt-8 text-2xl border-l-4 border-black pl-4">
+                        <div class="mt-8 text-2xl border-l-4 border-black pl-4 small-text">
                             <b>{{ $title }}</b>
                         </div>
 
@@ -57,26 +57,29 @@
                                 <div class="lg:w-4/5 mx-auto">
                                     <div class="flex flex-wrap w-full py-10 px-10 relative mb-4" style="background-color: #efefef;">
                                         <div class="lg:w-4/5 mx-auto">
-                                            <h2 class="mt-4 mb-8 text-xl text-gray-900 font-medium title-font">■マニュアル名：{{ $documents[0]->title }}</h2>
+                                            <h2 class="mt-4 mb-8 text-xl text-gray-900 font-medium title-font">
+                                                <span class="md:hidden block">■マニュアル名：<br>{{ $documents[0]->title }}</span>
+                                                <span class="hidden md:block">■マニュアル名：{{ $documents[0]->title }}</span>
+                                            </h2>
                                             <p class="mb-8 leading-relaxed">{!! nl2br(e($fileContents)) !!}</p>
                                             <div class="font-semibold text-right text-sm">最終更新日：{{ date('Y-m-d', strtotime($documents[0]->updated_at)) }}</div>
                                         </div>
                                     </div>
                                     <div class="flex justify-between">
                                         @if ($previousProcedureIds)
-                                        <button class="my-4 ml-4 inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg" x-data="{ taskId: '{{ $procedure->task_id }}' }" @click.stop="showModal1 = !showModal1; fetchProcedures('{{ $procedure->previous_procedure_id }}'); procedureId = '{{ $procedure->previous_procedure_id }}'">
+                                        <button class="my-4 ml-4 inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg small-text" x-data="{ taskId: '{{ $procedure->task_id }}' }" @click.stop="showModal1 = !showModal1; fetchProcedures('{{ $procedure->previous_procedure_id }}'); procedureId = '{{ $procedure->previous_procedure_id }}'">
                                             ← 前の手順
                                         </button>
                                         @else
-                                        <a class="my-4 ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none rounded text-lg">← 前の手順</a>
+                                        <a class="my-4 ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none rounded text-lg small-text">← 前の手順</a>
                                         @endif
 
                                         @if ($nextProcedureIds)
-                                        <button class="my-4 ml-4 inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg" x-data="{ taskId: '{{ $procedure->task_id }}' }" @click.stop="showModal1 = !showModal1; fetchProcedures('{{ $procedure->next_procedure_ids }}'); procedureId = '{{ $procedure->next_procedure_ids }}'">
+                                        <button class="my-4 ml-4 inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg small-text" x-data="{ taskId: '{{ $procedure->task_id }}' }" @click.stop="showModal1 = !showModal1; fetchProcedures('{{ $procedure->next_procedure_ids }}'); procedureId = '{{ $procedure->next_procedure_ids }}'">
                                             次の手順 →
                                         </button>
                                         @else
-                                        <a class="my-4 ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none rounded text-lg">次の手順 →</a>
+                                        <a class="my-4 ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none rounded text-lg small-text">次の手順 →</a>
                                         @endif
                                     </div>
                                     <div class="flex mt-4 items-center">

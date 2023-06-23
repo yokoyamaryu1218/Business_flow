@@ -22,26 +22,26 @@
                 </body>
             </div>
 
-            <div class="bg-opacity-25 mt-4">
+            <div class="bg-opacity-25 mt-4 left-align">
                 <form action="{{ route('dashboard.search') }}" method="GET">
                     @method('get')
-                    <div class="ml-12 mt-5 flex items-center">
+                    <div class="ml-12 mt-5 flex items-center mobile-ml-0">
                         <input type="search" name="search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ old('search') }}" placeholder="ここに文字を入力してください。">
-                        <button type="submit" class="ml-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg">検索</button>
+                        <button type="submit" class="ml-2 py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg small-button">検索</button>
                     </div>
-                    <div class="ml-12 mt-2">
+                    <div class="ml-12 mt-2 mobile-ml-0">
                         <span class="text-gray-700">検索対象:</span>
-                        <label class="inline-flex items-center">
+                        <label class="inline-flex items-center mobile-ml-0">
                             <input type="checkbox" name="search_target[]" value="task" class="form-checkbox">
-                            <span class="ml-2">作業</span>
+                            <span class="ml-2 mobile-ml">作業</span>
                         </label>
-                        <label class="inline-flex items-center ml-4">
+                        <label class="inline-flex items-center ml-2 mobile-ml-0">
                             <input type="checkbox" name="search_target[]" value="procedure" class="form-checkbox">
-                            <span class="ml-2">手順</span>
+                            <span class="ml-2 mobile-ml">手順</span>
                         </label>
-                        <label class="inline-flex items-center ml-4">
+                        <label class="inline-flex items-center ml-2 mobile-ml-0">
                             <input type="checkbox" name="search_target[]" value="document" class="form-checkbox">
-                            <span class="ml-2">マニュアル</span>
+                            <span class="ml-2 mobile-ml">マニュアル</span>
                         </label>
                     </div>
                 </form>
@@ -61,7 +61,7 @@
                     </h2>
                 </body>
             </div>
-            <div class="ml-12">
+            <div class="ml-12 mobile-ml-0">
                 <div class="mt-2 text-gray-500">
                     ご覧になりたい作業をクリックしてください。
                 </div>
@@ -102,7 +102,7 @@
                 </body>
             </div>
             <!-- ここで表示位置を変えられる -->
-            <div class="ml-12"> 
+            <div class="ml-12  mobile-ml-0">
                 <div class="mt-2 text-gray-500">
                     ご覧になりたいマニュアルをクリックしてください。
                 </div>

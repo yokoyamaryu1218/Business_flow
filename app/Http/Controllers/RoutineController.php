@@ -24,7 +24,7 @@ class RoutineController extends Controller
         $task_id = $id1;
 
         // 手順リストの取得
-        $procedure_list = Procedure::all();
+        $procedure_list = Procedure::whereNotNull('approver_id')->get();
 
         // ルーティンの取得
         $routines = Routine::where('id', $id2)->get();
@@ -49,9 +49,11 @@ class RoutineController extends Controller
 
         $previous_procedures_list = Procedure::where('task_id', $id1)
             ->whereNull('previous_procedure_id')
+            ->whereNotNull('approver_id')
             ->get();
         $next_procedures_list = Procedure::where('task_id', $id1)
             ->whereNull('next_procedure_ids')
+            ->whereNotNull('approver_id')
             ->get();
 
 
@@ -69,12 +71,14 @@ class RoutineController extends Controller
     {
         $title = "ルーティン新規登録";
         $task_id = $id;
-        $procedure_list = Procedure::where('task_id', $id)->get();
+        $procedure_list = Procedure::where('task_id', $id)->whereNotNull('approver_id')->get();
         $previous_procedures_list = Procedure::where('task_id', $id)
             ->whereNull('previous_procedure_id')
+            ->whereNotNull('approver_id')
             ->get();
         $next_procedures_list = Procedure::where('task_id', $id)
             ->whereNull('next_procedure_ids')
+            ->whereNotNull('approver_id')
             ->get();
 
         return view('routine.create', compact('title', 'task_id', 'procedure_list', 'previous_procedures_list', 'next_procedures_list'));
@@ -90,29 +94,29 @@ class RoutineController extends Controller
     {
         $routineSV = new RoutineService;
         $result = $routineSV->numbering($request->input('procedure_id'));
-    
+
         if ($result === false) {
             return redirect()->back()->withErrors(['previous_procedure_id' => '手順を重複して選択しています。']);
         }
-    
+
         $procedureIds = $result;
         $previous_procedure_id = reset($procedureIds);
         $next_procedure_ids = null;
         $next_procedure_id = null;
-    
+
         if (count($procedureIds) > 1) {
             $next_procedure_id = end($procedureIds);
-    
+
             if (count($procedureIds) > 2) {
                 $next_procedure_ids = implode(',', array_slice($procedureIds, 1, -1));
             }
         }
-    
+
         DB::beginTransaction();
-    
+
         try {
             $approver_id = (Auth::user()->role !== 9) ? Auth::user()->employee_number : null;
-    
+
             $routine = Routine::create([
                 'task_id' => $request['task_id'],
                 'previous_procedure_id' => $previous_procedure_id,
@@ -122,14 +126,15 @@ class RoutineController extends Controller
                 'approver_id' => $approver_id,
                 'creator_id' => Auth::user()->employee_number,
             ]);
-    
+
             if (Auth::user()->role !== 9) {
                 $routineSV = new RoutineService;
                 $result = $routineSV->createRoutine($routine);
-    
+
                 if (!$result) {
                     throw new \Exception('登録エラー');
                 }
+                session()->flash('status', '登録完了');
             } else {
                 RoutineApprovals::create([
                     'routine_id' => $routine->id,
@@ -138,20 +143,19 @@ class RoutineController extends Controller
                     'approval_at' => null,
                 ]);
 
-                session()->flash('status', '更新完了');
+                session()->flash('status', '登録が完了しました。承認までお待ちください。');
             }
-    
+
             DB::commit();
-            session()->flash('status', '更新完了');
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('alert', '登録エラー');
         }
-    
+
         return (Auth::user()->role !== 9)
             ? redirect()->route('task.edit', ['task' => $routine->task_id])
             : redirect()->route('approval.index');
-    }    
+    }
 
     /**
      * Display the specified resource.

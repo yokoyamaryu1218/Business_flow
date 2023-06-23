@@ -37,15 +37,14 @@ class DocumentService
         // ファイルの保存先パスを生成
         $filePath = 'documents/' . $number . '.txt';
         // ファイルに内容を保存
-        Storage::put($filePath, $details);
+        file_put_contents(public_path($filePath), $details);
     }
 
     public function getContents($fileName)
     {
         $filePath = 'documents/' . $fileName;
 
-        // テキストファイルの内容を取得する
-        $fileContents = Storage::disk('local')->get($filePath);
+        $fileContents = file_get_contents(public_path($filePath));
 
         return $fileContents;
     }
@@ -54,13 +53,11 @@ class DocumentService
     {
         $filePath = 'documents/' . $fileName;
 
-        $fileContents = Storage::get($filePath);
-
         $headers = [
             'Content-Type' => 'text/plain',
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ];
 
-        return new Response($fileContents, 200, $headers);
+        return response()->download(public_path($filePath), $fileName, $headers);
     }
 }

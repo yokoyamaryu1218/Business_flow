@@ -16,17 +16,18 @@
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                <div class="sm:p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="mt-8 text-2xl border-l-4 border-black pl-4">
                         <b>{{ $title }}</b>
                     </div>
 
                     <div class="bg-opacity-25 mt-4">
-                        <div class="p-4">
+                        <div class="sm:p-4">
 
                             <div class="flex items-center">
+
                                 <body>
-                                    <h2 class="flex items-center text-2xl  font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
+                                    <h2 class="flex items-center text-xl sm:text-2xl font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
                                         登録社員一覧
                                     </h2>
                                     <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('user.create') }}'">新規登録</button>
@@ -41,7 +42,7 @@
                                             <x-status />
                                         </div>
 
-                                        <table class="table-auto w-full text-left whitespace-no-wrap">
+                                        <table class="w-full table-auto">
                                             <thead>
                                                 <tr>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">社員番号</th>

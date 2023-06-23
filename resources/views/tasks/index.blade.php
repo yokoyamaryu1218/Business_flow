@@ -42,12 +42,12 @@
                         </div>
 
                         <div class="bg-opacity-25 mt-4">
-                            <div class="p-4">
+                            <div class="sm:p-4">
 
                                 <div class="flex items-center">
 
                                     <body>
-                                        <h2 class="flex items-center text-2xl  font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
+                                        <h2 class="flex items-center text-xl sm:text-2xl font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
                                             登録作業一覧
                                         </h2>
                                         <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('task.create') }}'">作業登録</button>
@@ -65,9 +65,9 @@
                                             <div class="my-4 flex items-center justify-end">
                                                 <form action="{{ route('task.search') }}" method="GET">
                                                     @method('get')
-                                                    <div class="ml-12 mt-5 flex items-center">
+                                                    <div class="ml-12 mt-5 flex items-center mobile-ml-0">
                                                         <input type="search" name="task_search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ old('task_search') }}" placeholder="作業名で検索可能です。">
-                                                        <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg">検索</button>
+                                                        <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg small-button small-button">検索</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -95,7 +95,7 @@
                                                                 @endif
                                                             </td>
                                                             <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
-                                                                <a href="{{ route('task.edit', ['task' => $task->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none transition-colors duration-300 ease-in-out hover:bg-green-600">編集</a>
+                                                                <a href="{{ route('task.edit', ['task' => $task->id]) }}" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none transition-colors duration-300 ease-in-out hover:bg-green-600 small-button">編集</a>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -119,11 +119,12 @@
             <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
 
                 <div class="bg-opacity-25 mt-4" id="section-2">
-                    <div class="p-4">
+                    <div class="sm:p-4">
 
                         <div class="flex items-center">
+
                             <body>
-                                <h2 class="flex items-center text-2xl  font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
+                                <h2 class="flex items-center text-xl sm:text-2xl font-extrabold dark:text-white" style="display: flex; align-items: center; padding: 7px 0 6px; flex-grow: 1;">
                                     登録手順一覧
                                 </h2>
                                 <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('task.procedure.procedure_create') }}'">手順登録</button>
@@ -137,9 +138,9 @@
                                     <div class="my-4 flex items-center justify-end">
                                         <form action="{{ route('task.procedure.search') }}" method="GET">
                                             @method('get')
-                                            <div class="ml-12 mt-5 flex items-center">
+                                            <div class="ml-12 mt-5 flex items-center mobile-ml-0">
                                                 <input type="search" name="procedure_search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ old('procedure_search') }}" placeholder="手順名で検索可能です。">
-                                                <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg">検索</button>
+                                                <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg small-button">検索</button>
                                             </div>
                                         </form>
                                     </div>
@@ -167,7 +168,7 @@
                                                         @endif
                                                     </td>
                                                     <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
-                                                        <a href="{{ route('task.procedure.edit',['id1' => $procedure->task_id, 'id2' => $procedure->id]) }}'" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none transition-colors duration-300 ease-in-out hover:bg-green-600">編集</a>
+                                                        <a href="{{ route('task.procedure.edit',['id1' => $procedure->task_id, 'id2' => $procedure->id]) }}'" class="edit-button text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none transition-colors duration-300 ease-in-out hover:bg-green-600 small-button">編集</a>
                                                     </td>
                                                 </tr>
                                             </tbody>

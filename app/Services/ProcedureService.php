@@ -69,7 +69,7 @@ class ProcedureService
         });
 
         if (empty($documents)) {
-            return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
+            return false;
         }
 
         return $documents;

@@ -88,7 +88,10 @@
                                                         <label>
                                                             <input type="radio" name="is_visible" value="1" @if ($task->is_visible === 1) { checked } @endif> 表示
                                                         </label>
-                                                        <label>
+                                                        <label class="hidden md:block">
+                                                            <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
+                                                        </label>
+                                                        <label class="md:hidden ml-20">
                                                             <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
                                                         </label>
                                                     </div>
@@ -116,8 +119,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
 
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-2">
-                    <div class="p-4">
+                <div class="sm:p-6 sm:px-20 bg-white border-b border-gray-200" id="section-2">
+                    <div class="sm:p-4">
 
                         <body>
                             <p class="Form-Item-Label mt-4">{{ $task->name }} に紐づいている手順</p>
@@ -134,7 +137,7 @@
                                             @method('get')
                                             <div class="ml-12 mt-5 flex items-center">
                                                 <input type="search" name="procedure_search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ old('procedure_search') }}" placeholder="手順名で検索可能です。">
-                                                <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg">検索</button>
+                                                <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg small-button">検索</button>
                                             </div>
                                         </form>
                                     </div>
@@ -158,7 +161,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="font-medium border-t-2 border-gray-200 px-4 py-3">
-                                                    <a href="{{ route('task.procedure.edit', ['id1' => $procedure->task_id, 'id2' => $procedure->id]) }}'" class="text-white bg-green-400 border-0 py-2 px-4 rounded hover:bg-green-500 focus:outline-none">編集</a>
+                                                    <a href="{{ route('task.procedure.edit', ['id1' => $procedure->task_id, 'id2' => $procedure->id]) }}'" class="text-white bg-green-400 border-0 py-2 px-4 rounded hover:bg-green-500 focus:outline-none small-button">編集</a>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -185,12 +188,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
 
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-3">
-                    <div class="p-4">
+                <div class="sm:p-6 sm:px-20 bg-white border-b border-gray-200" id="section-3">
+                    <div class="sm:p-4">
 
                         <body>
                             <p class="Form-Item-Label mt-4">ルーティン一覧</p>
-                            <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded" onclick="window.location.href = '{{ route('task.procedure.routine_create', ['id' => $task->id]) }}'">新規登録</button>
+                            <button type="button" class="flex mb-4 ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded small-button" onclick="window.location.href = '{{ route('task.procedure.routine_create', ['id' => $task->id]) }}'">新規登録</button>
                         </body>
 
                         @if (count($sortedProcedures) > 0)
@@ -233,7 +236,6 @@
                             @endforeach
                         </div>
                         @if ($groupIndex !== count($sortedProcedures) - 1 && !empty($sortedProcedures[$groupIndex + 1]))
-                        <hr>
                         @endif
                         @endforeach
                         @else
@@ -256,27 +258,25 @@
                 <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-4">
                     <div class="bg-opacity-25 mt-4">
                         <div class="p-4">
-                            <p class="Form-Item-Label mt-4">手順削除：</p>
+                            <p class="Form-Item-Label mt-4">作業削除：</p>
                             <section class="text-gray-600 body-font">
-                                <div class="container py-1 mx-auto flex flex-wrap">
-                                    <div class="lg:w-2/3 mx-auto">
-                                        @if(Auth::user()->role !== 9)
-                                        @if (count($sortedProcedures) === 0)
-                                        <form method="POST" action="{{ route('task.destroy', ['task' => $task->id]) }}">
-                                            @csrf
-                                            @method('delete')
-                                            <div class="flex justify-between my-4">
-                                                <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
-                                                <button onclick="return confirm('作業に関連する手順も削除されます。\n本当に削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
-                                            </div>
-                                        </form>
-                                        @else
-                                        現在登録中のルーティンがあるため削除できません。
-                                        @endif
-                                        @else
-                                        削除権限がありません。
-                                        @endif
-                                    </div>
+                                <div class="container py-1 mx-auto">
+                                    @if(Auth::user()->role !== 9)
+                                    @if (count($sortedProcedures) === 0)
+                                    <form method="POST" action="{{ route('task.destroy', ['task' => $task->id]) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <div class="flex justify-between items-center my-4 lg:w-2/3 mx-auto"> <!-- lg:w-2/3 を追加し、justify-between から items-center に変更 -->
+                                            <button type="button" class="flex mb-4 text-white bg-yellow-500 hover:bg-yellow-500 border-0 py-2 px-6 focus:outline-none rounded" onclick="history.back()">戻る</button>
+                                            <button onclick="return confirm('作業に関連する手順も削除されます。\n本当に削除してもよろしいですか？')" type="submit" class="flex mb-4 ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">削除</button>
+                                        </div>
+                                    </form>
+                                    @else
+                                    現在登録中のルーティンがあるため削除できません。
+                                    @endif
+                                    @else
+                                    削除権限がありません。
+                                    @endif
                                 </div>
                             </section>
                         </div>

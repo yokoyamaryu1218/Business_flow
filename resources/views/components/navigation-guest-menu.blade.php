@@ -91,16 +91,18 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-jet-responsive-nav-link href="{{ route('login') }}">
-                ログイン
+            <!-- Authentication -->
+            <x-jet-responsive-nav-link href="/" :active="request()->is('/')">
+                トップページ
             </x-jet-responsive-nav-link>
+
         </div>
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="mt-3 space-y-1">
                 <!-- Authentication -->
-                <x-jet-responsive-nav-link href="{{ route('login') }}" :active="request()->routeIs('login')">
+                <x-jet-responsive-nav-link href="{{ route('login') }}">
                     ログイン
                 </x-jet-responsive-nav-link>
             </div>

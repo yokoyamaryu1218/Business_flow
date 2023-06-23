@@ -84,21 +84,6 @@
     }
 }
 
-.Form-Item-Input {
-    position: relative;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    margin-left: 40px;
-    padding-left: 1em;
-    padding-right: 1em;
-    height: 48px;
-    flex: 1;
-    width: 100%;
-    max-width: 390px;
-    background: #eaedf2;
-    font-size: 18px;
-}
-
 .Form-Item .select-wrapper {
     position: relative;
     display: inline-block;
@@ -118,6 +103,36 @@
     transform: translateY(-50%);
     font-size: 18px;
     pointer-events: none;
+}
+
+.Form-Item-Input {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-left: 40px;
+    padding-left: 1em;
+    padding-right: 1em;
+    height: 48px;
+    flex: 1;
+    width: 100%;
+    max-width: 390px;
+    background: #eaedf2;
+    font-size: 18px;
+}
+
+.Form-Item-Input {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-left: 40px;
+    padding-left: 1em;
+    padding-right: 1em;
+    height: 48px;
+    flex: 1;
+    width: 100%;
+    max-width: 390px;
+    background: #eaedf2;
+    font-size: 18px;
 }
 
 @media screen and (max-width: 480px) {
@@ -207,7 +222,6 @@
         max-width: 230px;
         margin-top: 10px;
         flex-wrap: wrap;
-        margin-left: 10px;
     }
 
     .Form-Item-RadioGroup label {
@@ -255,4 +269,45 @@ tr:hover .flex-shrink-0 {
 
 tr:hover .flex-shrink-0 {
     color: white;
+}
+
+@media (max-width: 440px) {
+    .mobile-ml-0 {
+        margin-left: 0px;
+        /* ml-3 に対応する値 */
+    }
+
+    .small-button {
+        padding-top: 0.15rem;
+        padding-bottom: 0.15rem;
+        padding-left: 0.15rem;
+        padding-right: 0.15rem;
+    }
+
+    .mobile-ml {
+        margin-left: 2.5px;
+        /* ml-3 に対応する値 */
+    }
+
+    .small-text {
+        font-size: 14px;
+    }
+
+    .pankuzu-text {
+        font-size: 10px;
+    }
+
+    .small-element {
+        max-width: 120px;
+        font-size: 1px;
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+}
+
+hr.dashed {
+    border: none;
+    border-top: 1px dashed rgba(0, 0, 0, 0.5);
+    /* 例えば、半透明の灰色に設定 */
+    height: 0;
 }

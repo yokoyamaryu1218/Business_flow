@@ -63,10 +63,13 @@
                                                     <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
                                                     <div class="Form-Item-RadioGroup mx-2">
                                                         <label>
-                                                            <input type="radio" name="is_visible" value="1"> 表示
+                                                            <input type="radio" name="is_visible" value="1" checked /> 表示
                                                         </label>
-                                                        <label>
-                                                            <input type="radio" name="is_visible" value="0" checked /> 非表示
+                                                        <label class="hidden md:block">
+                                                            <input type="radio" name="is_visible" value="0" /> 非表示
+                                                        </label>
+                                                        <label class="md:hidden ml-20">
+                                                            <input type="radio" name="is_visible" value="0" /> 非表示
                                                         </label>
                                                     </div>
                                                 </div>
@@ -80,7 +83,7 @@
                                                         <option value="{{ $procedure['id'] }}">{{ $procedure['title'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div id="add_waku_book" class="ml-2">
+                                                    <div id="add_waku_book" class="ml-2 mt-2 md:mt-0">
                                                         <button type="button" id="add_book" class="text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none addButton hover:bg-green-600">行追加</button>
                                                     </div>
                                                 </div>
@@ -102,7 +105,7 @@
                                                         <option value="{{ $procedure['id'] }}">{{ $procedure['title'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div class="ml-2">
+                                                    <div class="ml-2 mt-2 md:mt-0">
                                                         <button id="delete_book" class="text-white rounded-md text-center bg-red-400 py-2 px-4 inline-flex items-center focus:outline-none hover:bg-red-600">行削除</button>
                                                     </div>
                                                 </div>

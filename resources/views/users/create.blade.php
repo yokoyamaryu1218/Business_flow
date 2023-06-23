@@ -26,13 +26,13 @@
         <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
 
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
+                <div class="sm:p-6 sm:px-20 bg-white border-b border-gray-200">
                     <div class="mt-8 text-2xl border-l-4 border-black pl-4">
                         <b>{{ $title }}</b>
                     </div>
 
                     <div class="bg-opacity-25 mt-4">
-                        <div class="p-4">
+                        <div class="sm:p-4">
 
                             <section class="text-gray-600 body-font">
                                 <div class="container py-5 mx-auto flex flex-wrap">

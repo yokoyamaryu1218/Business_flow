@@ -199,7 +199,6 @@ class DashboardController extends Controller
                 if (in_array('task', $search_target)) {
                     $task = Task::where('name', 'like', '%' . $search . '%')
                         ->where('is_visible', 1)
-                        ->whereNotNull('approver_id')
                         ->paginate(10, ['*'], 'task_page', $taskPage);
                     $search_list['task'] = $task;
                 }
@@ -217,7 +216,6 @@ class DashboardController extends Controller
                 // 検索対象が指定されていない場合、全ての対象で検索
                 $task = Task::where('name', 'like', '%' . $search . '%')
                     ->where('is_visible', 1)
-                    ->whereNotNull('approver_id')
                     ->paginate(10, ['*'], 'task_page', $taskPage);
                 $procedure = Procedure::where('name', 'like', '%' . $search . '%')
                     ->where('is_visible', 1)

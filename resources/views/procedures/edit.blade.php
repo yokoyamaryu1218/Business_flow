@@ -151,7 +151,10 @@
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($procedures->is_visible === 1) { checked } @endif> 表示
                                                     </label>
-                                                    <label>
+                                                    <label class="hidden md:block">
+                                                        <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif> 非表示
+                                                    </label>
+                                                    <label class="md:hidden ml-20">
                                                         <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif> 非表示
                                                     </label>
                                                 </div>
@@ -161,7 +164,10 @@
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($procedures->is_visible === 1) { checked } @endif disabled> 表示
                                                     </label>
-                                                    <label>
+                                                    <label class="hidden md:block">
+                                                        <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif disabled> 非表示
+                                                    </label>
+                                                    <label class="md:hidden ml-20">
                                                         <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif disabled> 非表示
                                                     </label>
                                                 </div>
@@ -176,7 +182,7 @@
                                                     @if ($index === 0)
                                                     <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>関連するマニュアル</p>
                                                     @else
-                                                    <p class="Form-Item-Label">&nbsp;</p>
+                                                    <p class="Form-Item-Label hidden md:block">&nbsp;</p>
                                                     @endif
                                                     <select name="document_id[]" class="Form-Item-Input">
                                                         <option value="">マニュアルを選択してください</option>
@@ -188,7 +194,7 @@
                                                         @endforeach
                                                     </select>
 
-                                                    <div id="add_waku_book" class="ml-2">
+                                                    <div id="add_waku_book" class="ml-2 mt-2 md:mt-0">
                                                         @if ($index === 0)
                                                         <button type="button" id="add_book" class="text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none addButton hover:bg-green-600">行追加</button>
                                                         @else
@@ -206,7 +212,7 @@
                                                         <option>{{ $procedure['title'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div id="add_waku_book" class="ml-2">
+                                                    <div id="add_waku_book" class="ml-2 mt-2 md:mt-0">
                                                         <button id="add_book" class="text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none addButton">行追加</button>
                                                     </div>
                                                 </div>
@@ -230,7 +236,7 @@
                                                     <option value="{{ $procedure['id'] }}">{{ $procedure['title'] }}</option>
                                                     @endforeach
                                                 </select>
-                                                <div class="ml-2">
+                                                <div class="ml-2 mt-2 md:mt-0">
                                                     <button id="delete_book" class="text-white rounded-md text-center bg-red-400 py-2 px-4 inline-flex items-center focus:outline-none hover:bg-red-600">行削除</button>
                                                 </div>
                                             </div>
@@ -250,8 +256,8 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="p-6 sm:px-20 bg-white border-b border-gray-200">
 
-                <div class="p-6 sm:px-20 bg-white border-b border-gray-200" id="section-2">
-                    <div class="p-4">
+                <div class="sm:p-6 sm:px-20 bg-white border-b border-gray-200" id="section-2">
+                    <div class="sm:p-4">
 
                         <body>
                             <p class="Form-Item-Label mt-4">ルーティン一覧</p>
@@ -346,7 +352,6 @@
                                     削除権限がありません。
                                     @endif
                                 </div>
-
                             </section>
                         </div>
                     </div>

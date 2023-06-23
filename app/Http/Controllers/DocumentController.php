@@ -296,14 +296,14 @@ class DocumentController extends Controller
         $change = $history->changes;
         $title = "マニュアル名：" . json_decode($change)->title;
         $fileContents = "マニュアル内容：\n" . json_decode($change)->fileContents;
-    
+
         // ファイルを作成せずに一時的なファイルとして保存する
         $tempFile = tempnam(sys_get_temp_dir(), 'manual_');
         file_put_contents($tempFile, $title . "\n" . $fileContents);
-    
+
         // ダウンロードするファイル名を設定
         $downloadFileName = $file_title . '.txt';
-    
+
         // ファイルをダウンロードする
         return response()->download($tempFile, $downloadFileName)->deleteFileAfterSend(true);
     }
@@ -325,15 +325,16 @@ class DocumentController extends Controller
         $zipFileName = tempnam(sys_get_temp_dir(), 'documents') . '.zip';
 
         // ZIPファイルを開く
-        if ($zip->open($zipFileName, ZipArchive::CREATE) !== true) {
+        if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
             return response()->json(['error' => 'ZIPファイルを作成できませんでした。']);
         }
 
         // documentsディレクトリ内のテキストファイルをZIPに追加
         foreach ($documents as $document) {
-            $filePath = storage_path("app/documents/{$document->file_name}"); // Notice 'app' added to the path
+            $filePath = public_path("documents/{$document->file_name}");
             if (file_exists($filePath)) {
-                $zip->addFile($filePath, $document->file_name);
+                $relativePath = "documents/{$document->file_name}";
+                $zip->addFile($filePath, $relativePath);
             }
         }
 
@@ -349,7 +350,6 @@ class DocumentController extends Controller
         return response()->download($zipFileName)->deleteFileAfterSend(true);
     }
 
-
     /**
      * Update the specified resource in storage.
      *
@@ -357,6 +357,7 @@ class DocumentController extends Controller
      * @param  \App\Models\Document  $document
      * @return \Illuminate\Http\Response
      */
+
     public function update(UpdateDocumentRequest $request, Document $document)
     {
         DB::beginTransaction();
@@ -402,7 +403,7 @@ class DocumentController extends Controller
             $filePath = 'documents/' . $fileName;
 
             // テキストファイルの内容を書き換える
-            Storage::disk('local')->put($filePath, $request['document_details']);
+            Storage::disk('public')->put($filePath, $request['document_details']);
 
             $document->title = $request['document_title'];
             $document->is_visible = $request['is_visible'];
@@ -431,16 +432,15 @@ class DocumentController extends Controller
         DB::beginTransaction();
 
         try {
-            // ファイルの存在を確認してから削除する
             $fileName = $document->file_name;
             $filePath = 'documents/' . $fileName;
-            if (Storage::exists($filePath)) {
-                Storage::delete($filePath);
+
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
             }
 
             $procedureIds = $document->procedureDocument()->pluck('id');
 
-            // 関連するテーブルのレコードを一括削除
             ProcedureDocument::whereIn('procedure_id', $procedureIds)->delete();
             DocumentApprovals::where('document_id', $document->id)->delete();
             DocumentHistory::where('document_id', $document->id)->delete();

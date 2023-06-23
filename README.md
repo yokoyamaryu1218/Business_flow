@@ -1,64 +1,184 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# 手順と関連付けたマニュアルのWeb閲覧システム
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+WEB上で、手順と関連付けたマニュアルを閲覧することができるシステムを個人開発しました。
 
-## About Laravel
+レスポンシブ対応となっており、スマホやタブレットからもアクセス可能です。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 目次
+- [本システムの特徴](#本システムの特徴)
+- [URLとログイン情報](#urlとログイン情報)
+- [機能一覧](#機能一覧)
+  - [非ログイン状態での機能](#非ログイン状態での機能)
+  - [ログイン状態での機能](#ログイン状態での機能)
+- [実装環境](#実装環境)
+- [SSL設定について](#ssl設定について)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 本システムの特徴
+- **工夫した点**
+<details>
+  <summary>１.マニュアルや手順・作業の追加・編集できるように社員認証機能を設けました。</summary>
+    ・社員認証機能を導入し、マニュアルや手順、作業の追加や編集を認証された社員のみが行えるようにしました。</br>
+    ・管理者が社員登録を行い、各社員に一般社員、マネージャー、管理者の権限を設定できるようにしました。</br>
+    これにより、組織内の知識やノウハウを共有しやすくなり、最新情報や効率的な手順が共有されるようになります。</br>
+    一般社員も組織内の知識共有や参画意欲を高めるため、管理者が登録することで、マニュアルや手順の追加・編集が可能となっています。</br>
+    社員認証機能と権限設定により、情報のセキュリティと統制が確保され、組織全体の生産性や品質向上に貢献します。
+</details>
+<details>
+  <summary>２.一般社員が各項目の追加を行った場合はマネージャ以上の承認後に公開されるようにしました。</summary>
+    ・ミスや誤りの軽減: 追加されるコンテンツの品質を事前に確認・評価できるよう、承認プロセスを導入しました。</br>
+    ・品質管理の向上: 追加される情報が公開される前に、マネージャ以上が修正や調整を行えるようにしました。</br>
+    これにより、社員が提供する情報の品質が向上し、正確性や一貫性が保たれることが期待されます。</br>
+    また、一般社員のミスや誤りが事前に修正されるため、より信頼性の高い情報提供が実現されます。
+</details>
+<details>
+  <summary>３.誤登録に備え、マニュアルの更新履歴を最大5件残すようにしました。</summary>
+    ・変更の追跡: マニュアルの更新履歴を残すことで、ミスや誤りが発生した場合に問題の特定や原因の特定が容易になります。</br>
+    ・バージョン管理と復元: 過去のバージョンの保持とデータのバックアップにより、情報の安全性と信頼性を向上させました。</br>
+    これにより、マニュアルの変更履歴や情報の保全が強化され、万一のミスや誤りに対処するための手段を用意しています。</br>
+    変更の追跡によって問題の特定が容易になり、バージョン管理と復元によって過去の情報を参照したり、データを元の状態に戻すことが可能です。</br>
+    これにより、情報の安全性と信頼性が向上し、社員が正確かつ信頼できるマニュアルにアクセスできる環境が整いました。
+</details>
+<details>
+  <summary>４.マニュアルの登録時、テキストファイルを読み込んで登録できるようにしました。</summary>
+    ・マニュアルの登録画面において、テキストファイルを読み込んで登録できる機能を追加しました。</br>
+    ・複数のファイルを選択して一括登録が可能であり、効率的な登録作業が実現されます。</br>
+    ・社員はテキストファイルを選択するだけで、複数のマニュアルを一括で登録することができます。</br>
+    これにより、マニュアルの登録作業が簡素化され、効率的なファイル登録が可能となります。</br>
+    また、テキストファイルのみを対象とすることで、登録されるマニュアルの形式を統一し、システムの利用性を高めることができます。</br>
+</details>
+<details>
+  <summary>５.作業に紐づく手順の流れを明確に把握できるように、ルーティン機能を設定しました。</summary>
+    ・作業の一貫性と効率性の向上: ルーティンにより、作業手順の流れが明確化されるため、作業を一貫して実行することができます。これにより、作業の効率性が向上し、ミスや手順の飛ばしを防ぐことができます。</br>
+    ・柔軟な作業手順の適用: 認証機能を持つ社員がルーティンを作成・編集できるため、組織内の作業手順に柔軟性を持たせることができます。変更や改善があった場合にも、迅速にルーティンを更新することができ、最新の手順を反映させることができます。</br>
+    この工夫により、ルーティン機能の導入による作業手順の明確化は、作業の一貫性と効率性の向上に貢献します。</br>
+    また、柔軟な作業手順の適用により、変更や改善に迅速に対応することが可能となります。
+</details>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## URLとログイン情報
 
-## Learning Laravel
+ログイン情報は以下の通りです.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 管理者
+  - 社員番号：1000
+  - パスワード：password123
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- マネージャ
+  - 社員番号：1001
+  - パスワード：password123
 
-## Laravel Sponsors
+- 一般社員
+  - 社員番号：1004
+  - パスワード：password123
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## 機能一覧
 
-### Premium Partners
+### 非ログイン状態での機能
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+#### トップ画面
+- キーワード検索: 作業やマニュアルをキーワードで検索します。
+- 作業一覧: 最新の作業を最大10件表示します。10件を超える場合は、「作業一覧」のリンクを表示します。
+- マニュアル一覧: 最新のマニュアルを最大10件表示します。10件を超える場合は、「マニュアル一覧」のリンクを表示します。
 
-## Contributing
+#### 作業一覧
+- キーワード検索: 作業のキーワード検索ができます。
+- 作業一覧表示: 作業の一覧が表示されます。
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### 作業詳細
+- キーワード検索: 関連する手順のキーワード検索ができます。
+- 手順一覧表示: 作業に関連する手順の一覧を表示します。各手順は手順詳細画面へのリンクです。
+- ルーティン一覧表示: 作業に関連するルーティンの一覧を表示します。各ルーティンは手順詳細画面へのリンクです。
 
-## Code of Conduct
+#### 手順詳細
+- 関連するマニュアルの内容表示: 手順に関連するマニュアルの内容を表示します。
+- 前の手順、次の手順のリンク表示: 前後の手順へのリンクを表示します。
+- 関連マニュアルの表示: 関連するマニュアルのリンクを表示します。
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### マニュアル一覧
+- キーワード検索: マニュアルをキーワードで検索します。
+- マニュアル一覧表示: マニュアルの一覧を表示します。各マニュアルはマニュアル詳細画面へのリンクです。
 
-## Security Vulnerabilities
+#### マニュアル詳細
+- マニュアル内容表示: マニュアルの内容を表示します。
+- 関連する作業・手順のリンク表示: マニュアルに関連する作業および手順へのリンクを表示します。
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### ログイン状態での機能
 
-## License
+#### トップ画面
+- キーワード検索: 作業やマニュアルをキーワードで検索します。
+- 作業一覧: 最新の作業を最大10件表示します。10件を超える場合は、「作業一覧」のリンクを表示します。
+- マニュアル一覧: 最新のマニュアルを最大10件表示します。10件を超える場合は、「マニュアル一覧」のリンクを表示します。
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### 作業管理
+- キーワード検索: 作業や手順をキーワードで検索します。
+- 新規登録: 新しい作業や手順を登録します。
+- 作業一覧表示: 作業の一覧を表示します。
+- 手順一覧表示: 手順の一覧を表示します。
+
+#### 作業管理（作業詳細）
+- 作業編集機能: 作業名や公開設定を編集します。
+- キーワード検索: 作業に紐づく手順をキーワードで検索します。
+- 新規登録: 作業に紐づく手順やルーティンを新規登録します。
+- 作業に紐づく手順一覧: 手順詳細画面へのリンクを含む一覧を表示します。
+- 作業に紐づくルーティン一覧: ルーティン詳細画面へのリンクを含む一覧を表示します。
+- 作業削除機能: 作業を削除します（一般社員は削除権限なし）。
+
+#### 作業管理（手順詳細）
+- 作業編集機能: 手順名や関連するマニュアルを編集します。
+- 手順が紐づいているルーティン一覧: 詳細画面へのリンクを含む一覧を表示します。
+- 作業削除機能: 手順を削除します（一般社員は削除権限なし）。
+
+#### 作業管理（ルーティン詳細）
+- ルーティン編集機能: ルーティンに紐づく手順の追加や変更ができます。
+- ルーティン削除機能: ルーティンを削除します（一般社員は削除権限なし）。
+
+#### マニュアル管理
+- キーワード検索: マニュアルをキーワードで検索します。
+- 新規登録: マニュアルを直接入力して登録します。
+- 新規登録（ファイル読込）: ファイルを読み込んで登録します（レスポンシブ時は非表示）。
+- マニュアル一覧: マニュアル編集画面へのリンクを含む一覧を表示します。
+- ファイル一括ダウンロード機能: 複数のファイルを一括でダウンロードします（レスポンシブ時は非表示）。
+
+#### マニュアル管理（マニュアル編集）
+- マニュアル編集機能: マニュアル名、マニュアル内容、公開設定を編集します。
+- 更新履歴: マニュアルの更新履歴を表示します（レスポンシブ時は非表示）。
+- マニュアル削除機能: マニュアルを削除します（一般社員は削除権限なし）。
+
+### ■一般社員のみ表示
+
+#### 申請一覧
+- 申請一覧表示: 手順、ルーティン、マニュアルごとに申請の一覧を表示します。
+
+#### 申請詳細
+- 申請内容の表示: 申請の内容を表示します。
+- ステータスの変更: 申請のステータスを承認待ち、取り下げの間で変更します。
+- 申請の削除: 申請を削除します。
+
+### ■マネージャ以上のみ表示
+
+#### 承認機能
+- 承認待ち一覧: 手順、ルーティン、マニュアルの承認待ち一覧を表示します。
+- 承認済み一覧: 手順、ルーティン、マニュアルの承認済み一覧を表示します。
+
+#### 承認詳細
+- 申請内容の表示: 申請の内容を表示します。
+- ステータスの変更: 申請のステータスを承認待ち、承認、否認の間で変更します。
+
+### ■管理者のみ表示
+
+#### 人員管理
+- 新規登録: 新しい社員を登録します。
+- 登録社員一覧: 登録されている社員の一覧を表示します。
+
+#### 社員情報変更
+- 社員情報編集: 社員の名前、ステータス、パスワードを編集します。
+- 登録情報削除: 社員の登録情報を削除します。
+
+## 実装環境
+
+　バックエンド　： PHP(8.1.12) , Laravel9  , MySQL
+
+　フロントエンド： HTML・CSS, JavaScript, Tailwind CSS v2.0
+ 
+## SSL設定について
+
+「さくらのレンタルサーバー」にてSSL設定をした上で公開しております。

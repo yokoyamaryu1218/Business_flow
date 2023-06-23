@@ -1135,6 +1135,12 @@ select {
 .-mt-px {
   margin-top: -1px;
 }
+.ml-20 {
+  margin-left: 5rem;
+}
+.ml-40 {
+  margin-left: 10rem;
+}
 .block {
   display: block;
 }
@@ -2669,6 +2675,10 @@ select {
     padding: 1.5rem;
   }
 
+  .sm\:p-4 {
+    padding: 1rem;
+  }
+
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -2695,6 +2705,11 @@ select {
   .sm\:text-left {
     text-align: left;
   }
+
+  .sm\:text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
 }
 @media (min-width: 768px) {
 
@@ -2716,6 +2731,10 @@ select {
 
   .md\:block {
     display: block;
+  }
+
+  .md\:inline-block {
+    display: inline-block;
   }
 
   .md\:grid {
@@ -2754,6 +2773,14 @@ select {
 
   .md\:border-l {
     border-left-width: 1px;
+  }
+
+  .md\:p-6 {
+    padding: 1.5rem;
+  }
+
+  .md\:p-4 {
+    padding: 1rem;
   }
 }
 @media (min-width: 1024px) {

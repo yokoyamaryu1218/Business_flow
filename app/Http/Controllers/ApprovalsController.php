@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use App\Models\Document;
 use App\Models\Procedure;
 use App\Models\Routine;
+use App\Models\ProcedureDocument;
 use App\Models\DocumentApprovals;
 use App\Models\ProcedureApprovals;
 use App\Models\RoutineApprovals;
@@ -34,24 +35,34 @@ class ApprovalsController extends Controller
 
         $title = $isApprover ? "承認管理" : "申請一覧";
 
-        $documentQuery = DocumentApprovals::select('document_approvals.*', 'documents.title', 'users.name as user_name')
-            ->leftJoin('documents', 'document_approvals.document_id', '=', 'documents.id')
-            ->leftJoin('users', 'document_approvals.creator_id', '=', 'users.employee_number')
-            ->where('document_approvals.approved', 0);
+        if ($isApprover) {
+            $documentQuery = DocumentApprovals::select('document_approvals.*', 'documents.title', 'users.name as user_name')
+                ->leftJoin('documents', 'document_approvals.document_id', '=', 'documents.id')
+                ->leftJoin('users', 'document_approvals.creator_id', '=', 'users.employee_number')
+                ->where('document_approvals.approved', 0);
 
-        $routineQuery = RoutineApprovals::select('routine_approvals.*', 'users.name as user_name')
-            ->leftJoin('users', 'routine_approvals.creator_id', '=', 'users.employee_number')
-            ->where('routine_approvals.approved', 0);
+            $routineQuery = RoutineApprovals::select('routine_approvals.*', 'users.name as user_name')
+                ->leftJoin('users', 'routine_approvals.creator_id', '=', 'users.employee_number')
+                ->where('routine_approvals.approved', 0);
 
-        $procedureQuery = ProcedureApprovals::select('procedure_approvals.*', 'procedures.name', 'users.name as user_name')
-            ->leftJoin('users', 'procedure_approvals.creator_id', '=', 'users.employee_number')
-            ->leftJoin('procedures', 'procedure_approvals.procedure_id', '=', 'procedures.id')
-            ->where('procedure_approvals.approved', 0);
+            $procedureQuery = ProcedureApprovals::select('procedure_approvals.*', 'procedures.name', 'users.name as user_name')
+                ->leftJoin('users', 'procedure_approvals.creator_id', '=', 'users.employee_number')
+                ->leftJoin('procedures', 'procedure_approvals.procedure_id', '=', 'procedures.id')
+                ->where('procedure_approvals.approved', 0);
+        } else {
+            $documentQuery = DocumentApprovals::select('document_approvals.*', 'documents.title', 'users.name as user_name')
+                ->leftJoin('documents', 'document_approvals.document_id', '=', 'documents.id')
+                ->leftJoin('users', 'document_approvals.creator_id', '=', 'users.employee_number')
+                ->where('document_approvals.creator_id', Auth::user()->employee_number);
 
-        if (!$isApprover) {
-            $documentQuery->where('document_approvals.creator_id', Auth::user()->employee_number);
-            $routineQuery->where('routine_approvals.creator_id', Auth::user()->employee_number);
-            $procedureQuery->where('procedure_approvals.creator_id', Auth::user()->employee_number);
+            $routineQuery = RoutineApprovals::select('routine_approvals.*', 'users.name as user_name')
+                ->leftJoin('users', 'routine_approvals.creator_id', '=', 'users.employee_number')
+                ->where('routine_approvals.creator_id', Auth::user()->employee_number);
+
+            $procedureQuery = ProcedureApprovals::select('procedure_approvals.*', 'procedures.name', 'users.name as user_name')
+                ->leftJoin('users', 'procedure_approvals.creator_id', '=', 'users.employee_number')
+                ->leftJoin('procedures', 'procedure_approvals.procedure_id', '=', 'procedures.id')
+                ->where('procedure_approvals.creator_id', Auth::user()->employee_number);
         }
 
         $documents = $documentQuery->paginate(10, ['*'], 'document_page', $documentPage);
@@ -305,9 +316,14 @@ class ApprovalsController extends Controller
 
             if ($request->input('approved') === "1") {
                 $documents = explode(',', $procedures->document_id);
-                $procedure->documents()->sync($documents);
+                foreach ($documents as $document) {
+                    ProcedureDocument::create([
+                        'procedure_id' => $procedure->id,
+                        'document_id' => $document,
+                    ]);
+                }
             } else {
-                $procedure->documents()->detach();
+                ProcedureDocument::where('procedure_id', $procedure->id)->delete();
             }
 
             DB::commit();

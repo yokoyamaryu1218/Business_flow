@@ -4,7 +4,7 @@
     <x-slot name="header">
         <ol class="inline-flex items-center space-x-1 md:space-x-3">
             <li class="inline-flex items-center">
-                <a href="{{ route('task.index') }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white">
+                <a href="{{ route('task.index') }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white small-text">
                     作業管理
                 </a>
             </li>
@@ -13,7 +13,7 @@
                     <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <a href="{{ route('task.edit', ['task' => $task_id]) }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white">
+                    <a href="{{ route('task.edit', ['task' => $task_id]) }}" class="inline-flex items-center text-base font-medium text-blue-700 hover:text-blue-600 dark:text-blue-400 dark:hover:text-white small-text">
                         作業詳細
                     </a>
                 </div>
@@ -23,7 +23,7 @@
                     <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
                     </svg>
-                    <span class="ml-1 text-base font-semibold md:ml-2">
+                    <span class="ml-1 text-base font-semibold md:ml-2 small-text">
                         {{ $title }}
                     </span>
                 </div>
@@ -62,7 +62,7 @@
                                                         <option value="{{ $procedure['id'] }}">{{ $procedure['name'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div id="add_waku_previous" class="ml-2">
+                                                    <div id="add_waku_previous" class="ml-2 mt-2 md:mt-0">
                                                         <button type="button" id="add_previous" class="text-white rounded-md text-center bg-green-400 py-2 px-4 inline-flex items-center focus:outline-none addButton hover:bg-green-600">行追加</button>
                                                     </div>
                                                 </div>
@@ -73,10 +73,13 @@
                                                 <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>公開設定</p>
                                                 <div class="Form-Item-RadioGroup">
                                                     <label>
-                                                        <input type="radio" name="is_visible" value="1"> 表示
+                                                        <input type="radio" name="is_visible" value="1" checked /> 表示
                                                     </label>
-                                                    <label>
-                                                        <input type="radio" name="is_visible" value="0" checked /> 非表示
+                                                    <label class="hidden md:block">
+                                                        <input type="radio" name="is_visible" name="is_visible" value="0" /> 非表示
+                                                    </label>
+                                                    <label class="md:hidden ml-20">
+                                                        <input type="radio" name="is_visible" name="is_visible" value="0" /> 非表示
                                                     </label>
                                                 </div>
                                             </div>
@@ -92,7 +95,7 @@
                                                         <option value="{{ $procedure['id'] }}">{{ $procedure['name'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div class="ml-2">
+                                                    <div class="ml-2 mt-2 md:mt-0">
                                                         <button type="button" class="deleteButton text-white rounded-md text-center bg-red-400 py-2 px-4 inline-flex items-center focus:outline-none hover:bg-red-600">行削除</button>
                                                     </div>
                                                 </div>
@@ -104,7 +107,7 @@
                                                         <option value="{{ $procedure['id'] }}">{{ $procedure['name'] }}</option>
                                                         @endforeach
                                                     </select>
-                                                    <div class="ml-2">
+                                                    <div class="ml-2 mt-2 md:mt-0">
                                                         <button type="button" class="deleteButton text-white rounded-md text-center bg-red-400 py-2 px-4 inline-flex items-center focus:outline-none hover:bg-red-600">行削除</button>
                                                     </div>
                                                 </div>

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProcedureDocument;
 use App\Models\Routine;
+use App\Models\Document;
 
 class Procedure extends Model
 {
@@ -34,5 +35,10 @@ class Procedure extends Model
     public function routine()
     {
         return $this->hasMany(Routine::class);
+    }
+
+    public function documents()
+    {
+        return $this->belongsToMany(Document::class);
     }
 }

@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="bg-opacity-25 mt-4">
-                        <div class="p-4">
+                        <div class="sm:p-4">
 
                             <div class="flex items-center">
 
@@ -70,15 +70,15 @@
                                         <div class="my-4 flex items-center justify-end">
                                             <form action="{{ route('document.search') }}" method="GET">
                                                 @method('get')
-                                                <div class="ml-12 mt-5 flex items-center">
+                                                <div class="ml-12 mt-5 flex items-center mobile-ml-0">
                                                     <input type="search" name="search" id="default-search" class="block w-60 p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ $search }}" placeholder="タイトル、ナンバーで検索可能です。">
-                                                    <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg">検索</button>
+                                                    <button type="submit" class="ml-2 py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-lg small-button">検索</button>
                                                 </div>
                                             </form>
                                         </div>
 
                                         @if (count($search_list) > 0)
-                                        <table class="table-auto w-full text-left whitespace-no-wrap">
+                                        <table class="w-full table-auto">
                                             <thead>
                                                 <tr>
                                                     <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">ナンバー</th>

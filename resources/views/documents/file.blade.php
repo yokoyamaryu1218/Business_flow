@@ -63,7 +63,7 @@
                                                         <input type="radio" name="is_visible" value="1"> 表示
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="is_visible" value="0" checked /> 非表示
+                                                        <input type="radio" class="hidden md:inline-block ml-40" name="is_visible" value="0" checked /> 非表示
                                                     </label>
                                                 </div>
                                             </div>

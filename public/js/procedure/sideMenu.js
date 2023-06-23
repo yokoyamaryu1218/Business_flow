@@ -6,12 +6,12 @@ function updateActiveMenu() {
     var section1Position = document.getElementById("section-1").offsetTop;
     var section2Position = document.getElementById("section-2").offsetTop;
     var section3Position, section4Position;
-    
+
     // 別ファイルの特定の部分を削除するための条件文を追加
     if (document.getElementById("section-3")) {
         section3Position = document.getElementById("section-3").offsetTop;
     }
-    
+
     if (document.getElementById("section-4")) {
         section4Position = document.getElementById("section-4").offsetTop;
     }
@@ -41,24 +41,57 @@ function updateActiveMenu() {
         anchor1.classList.add("text-white");
         anchor1.classList.remove("text-red-500");
         img1.style.filter = 'invert(1) brightness(100)'; // ここで画像の色を白に変更する
-    } else if (scrollPosition >= section2Position && scrollPosition < section3Position) {
+        menuSection1.classList.remove("bg-white");
+    } else {
+        menuSection1.classList.add("bg-white");
+        menuSection1.classList.remove("bg-blue-500", "text-white");
+        anchor1.classList.remove("text-white");
+        anchor1.classList.add("text-red-500");
+        img1.style.filter = ''; // ここで画像の色を元に戻す
+    }
+
+    if (scrollPosition >= section2Position && scrollPosition < section3Position) {
         menuSection2.classList.add("bg-blue-500", "text-white");
         anchor2.classList.add("text-white");
         anchor2.classList.remove("text-red-500");
         img2.style.filter = 'invert(1) brightness(100)'; // ここで画像の色を白に変更する
-    } else if (scrollPosition >= section3Position && scrollPosition < section4Position) {
-        menuSection3.classList.add("bg-blue-500", "text-white");
-        anchor3.classList.add("text-white");
-        anchor3.classList.remove("text-red-500");
-        img3.style.filter = 'invert(1) brightness(100)'; // ここで画像の色を白に変更する
+        menuSection2.classList.remove("bg-white");
+    } else {
+        menuSection2.classList.add("bg-white");
+        menuSection2.classList.remove("bg-blue-500", "text-white");
+        anchor2.classList.remove("text-white");
+        anchor2.classList.add("text-red-500");
+        img2.style.filter = ''; // ここで画像の色を元に戻す
     }
 
-    // 追加のセクションに対しても同様の処理を行う
+    if (scrollPosition >= section3Position && scrollPosition < section4Position) {
+        if (menuSection3) {
+            menuSection3.classList.add("bg-blue-500", "text-white");
+            anchor3.classList.add("text-white");
+            anchor3.classList.remove("text-red-500");
+            img3.style.filter = 'invert(1) brightness(100)'; // ここで画像の色を白に変更する
+            menuSection3.classList.remove("bg-white");
+        }
+    } else if (menuSection3) {
+        menuSection3.classList.add("bg-white");
+        menuSection3.classList.remove("bg-blue-500", "text-white");
+        anchor3.classList.remove("text-white");
+        anchor3.classList.add("text-red-500");
+        img3.style.filter = ''; // ここで画像の色を元に戻す
+    }
+
     if (section4Position && scrollPosition >= section4Position) {
         menuSection4.classList.add("bg-blue-500", "text-white");
         anchor4.classList.add("text-white");
         anchor4.classList.remove("text-red-500");
         img4.style.filter = 'invert(1) brightness(100)'; // ここで画像の色を白に変更する
+        menuSection4.classList.remove("bg-white");
+    } else if (menuSection4) {
+        menuSection4.classList.add("bg-white");
+        menuSection4.classList.remove("bg-blue-500", "text-white");
+        anchor4.classList.remove("text-white");
+        anchor4.classList.add("text-red-500");
+        img4.style.filter = ''; // ここで画像の色を元に戻す
     }
 }
 
