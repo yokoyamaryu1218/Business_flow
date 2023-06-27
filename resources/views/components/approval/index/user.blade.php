@@ -14,7 +14,7 @@
 
     <div class="flex" id="section-1">
         <!-- サイドバーを追加 -->
-        <div class="flex fixed">
+        <div class="flex fixed left-0 bottom-0 mb-20">
             <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10">
                 <div class="list-group">
                     <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
