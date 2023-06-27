@@ -64,7 +64,7 @@ Route::middleware('can:user-higher')->group(function () {
 
     Route::get('/task/{id1}/routine/{id2}', [RoutineController::class, 'index'])->name('task.procedure.routine_edit');
     Route::post('/task/{id}/routine', [RoutineController::class, 'update'])->name('task.procedure.routine_update');
-    
+
     Route::delete('/task/{id}/routine', [RoutineController::class, 'destroy'])->name('task.procedure.routine_delete');
 
     Route::get('/manual', [DocumentController::class, 'index'])->name('document.index');
@@ -105,8 +105,11 @@ Route::middleware('can:admin')->group(function () {
 });
 
 Route::get('/task_list', [DashboardController::class, 'tasks'])->name('dashboard.tasks');
+Route::get('/task_list/search', [DashboardController::class, 'tasks_search'])->name('dashboard.tasks_search');
 Route::get('/product/{id}', [DashboardController::class, 'task_details'])->name('dashboard.task_details');
+Route::get('/product/{id}/search', [DashboardController::class, 'procedures_search'])->name('dashboard.procedures_search');
 Route::get('/faq_manual', [DashboardController::class, 'documents'])->name('dashboard.documents');
+Route::get('/faq_manual/search', [DashboardController::class, 'documents_search'])->name('dashboard.documents_search');
 Route::get('/faq_manual/{id}', [DashboardController::class, 'documents_details'])->name('dashboard.documents_details');
 Route::get('/product/{id1}/{id2}', [DashboardController::class, 'procedures'])->name('dashboard.procedures');
 Route::get('/search', [DashboardController::class, 'search'])->name('dashboard.search');

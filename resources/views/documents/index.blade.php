@@ -61,6 +61,7 @@
                                             <x-status />
                                         </div>
 
+                                        @if(count($documents) > 0)
                                         <div class="my-4 flex items-center justify-end">
                                             <form action="{{ route('document.search') }}" method="GET">
                                                 @method('get')
@@ -110,6 +111,9 @@
                                                 </a>
                                             </div>
                                         </div>
+                                        @else
+                                        現在登録のマニュアルはありません。
+                                        @endif
                                     </div>
                                 </div>
                             </section>

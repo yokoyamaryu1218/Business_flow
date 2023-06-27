@@ -984,6 +984,9 @@ select {
 .top-0 {
   top: 0px;
 }
+.bottom-0 {
+  bottom: 0px;
+}
 .z-0 {
   z-index: 0;
 }
@@ -1134,6 +1137,9 @@ select {
 }
 .-mt-px {
   margin-top: -1px;
+}
+.mb-20 {
+  margin-bottom: 5rem;
 }
 .ml-20 {
   margin-left: 5rem;

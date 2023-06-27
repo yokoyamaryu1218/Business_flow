@@ -26,7 +26,7 @@ class NavigationComposerServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('navigation-menu', function ($view) {
-            $works = Task::all();
+            $works = Task::where('is_visible', 1)->get();
             $work_list = [];
             foreach ($works as $work) {
                 array_push($work_list, $work);

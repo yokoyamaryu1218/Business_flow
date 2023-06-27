@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Http\Controllers;
@@ -105,12 +106,12 @@ class ApprovalsController extends Controller
             ->leftJoin('users as users_approver', 'procedure_approvals.approver_id', '=', 'users_approver.employee_number')
             ->where('procedure_approvals.approved', 1);
 
-        $documents = $documentQuery->paginate(10, ['*'], 'document_page', $documentPage);
-        $routines = $routineQuery->paginate(10, ['*'], 'routine_page', $routinePage);
-        $procedures = $procedureQuery->paginate(10, ['*'], 'procedure_page', $procedurePage);
+            $documents = $documentQuery->paginate(10, ['*'], 'document_page', $documentPage);
+            $routines = $routineQuery->paginate(10, ['*'], 'routine_page', $routinePage);
+            $procedures = $procedureQuery->paginate(10, ['*'], 'procedure_page', $procedurePage);
 
-        return view('approval.approved', compact('title', 'documents', 'routines', 'procedures'));
-    }
+            return view('approval.approved', compact('title', 'documents', 'routines', 'procedures', 'documentPage', 'routinePage', 'procedurePage'));
+        }
 
     /**
      * Show the form for editing the specified resource.

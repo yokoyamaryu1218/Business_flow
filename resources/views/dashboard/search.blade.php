@@ -41,15 +41,15 @@
                                 <div class="ml-12 mt-2 mobile-ml-0">
                                     <span class="text-gray-700">検索対象:</span>
                                     <label class="inline-flex items-center mobile-ml-0">
-                                        <input type="checkbox" name="search_target[]" value="task" class="form-checkbox">
+                                        <input type="checkbox" name="search_target[]" value="task" class="form-checkbox" {{ in_array('task', $search_target ?? []) ? 'checked' : '' }}>
                                         <span class="ml-2 mobile-ml">作業</span>
                                     </label>
                                     <label class="inline-flex items-center ml-2 mobile-ml-0">
-                                        <input type="checkbox" name="search_target[]" value="procedure" class="form-checkbox">
+                                        <input type="checkbox" name="search_target[]" value="procedure" class="form-checkbox" {{ in_array('procedure', $search_target ?? []) ? 'checked' : '' }}>
                                         <span class="ml-2 mobile-ml">手順</span>
                                     </label>
                                     <label class="inline-flex items-center ml-2 mobile-ml-0">
-                                        <input type="checkbox" name="search_target[]" value="document" class="form-checkbox">
+                                        <input type="checkbox" name="search_target[]" value="document" class="form-checkbox" {{ in_array('document', $search_target ?? []) ? 'checked' : '' }}>
                                         <span class="ml-2 mobile-ml">マニュアル</span>
                                     </label>
                                 </div>

@@ -24,7 +24,7 @@
     <div class="flex" id="section-1">
         <!-- サイドバーを追加 -->
         <div class="flex fixed">
-            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10">
+            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10 fixed bottom-0 left-0 mb-20">
                 <div class="list-group">
                     <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
                         <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.task')}}">
@@ -88,10 +88,7 @@
                                                         <label>
                                                             <input type="radio" name="is_visible" value="1" @if ($task->is_visible === 1) { checked } @endif> 表示
                                                         </label>
-                                                        <label class="hidden md:block">
-                                                            <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
-                                                        </label>
-                                                        <label class="md:hidden ml-20">
+                                                        <label class="ml-20-mobile">
                                                             <input type="radio" name="is_visible" value="0" @if ($task->is_visible === 0) { checked } @endif> 非表示
                                                         </label>
                                                     </div>

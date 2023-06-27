@@ -8,25 +8,16 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $work_list = [];
-    public $document_list = [];
+    public $work_list = []; // 作業リスト
+    public $document_list = []; // ドキュメントリスト
 
     public function mount()
     {
-        $work_list = [];
-        $works = Task::where('is_visible', 1)->get();
-        foreach ($works as $work) {
-            array_push($work_list, $work);
-        }
+        $this->work_list = Task::where('is_visible', 1)->get(); // 表示可能なタスクを取得
 
-        $document_list = [];
-        $documents = Document::where('is_visible', 1)->whereNotNull('approver_id')->get();
-        foreach ($documents as $document) {
-            array_push($document_list, $document);
-        }
-
-        $this->work_list = $work_list;
-        $this->document_list = $document_list;
+        $this->document_list = Document::where('is_visible', 1)
+            ->whereNotNull('approver_id')
+            ->get(); // 承認者が存在し、表示可能なドキュメントを取得
     }
 
     public function render()

@@ -33,8 +33,8 @@
 
     <div class="flex" id="section-1">
         <!-- サイドバーを追加 -->
-        <div class="flex fixed">
-            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10">
+        <div class="flex fixed bottom-0 left-0">
+            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10 mb-20">
                 <div class="list-group">
                     <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
                         <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.procedure')}}">
@@ -151,11 +151,8 @@
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($procedures->is_visible === 1) { checked } @endif> 表示
                                                     </label>
-                                                    <label class="hidden md:block">
-                                                        <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif> 非表示
-                                                    </label>
-                                                    <label class="md:hidden ml-20">
-                                                        <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif> 非表示
+                                                    <label class="ml-20-mobile">
+                                                        <input type="radio" name="is_visible" value="0" {{ $procedures->is_visible === 0 ? 'checked' : '' }}> 非表示
                                                     </label>
                                                 </div>
                                                 @else
@@ -164,10 +161,7 @@
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($procedures->is_visible === 1) { checked } @endif disabled> 表示
                                                     </label>
-                                                    <label class="hidden md:block">
-                                                        <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif disabled> 非表示
-                                                    </label>
-                                                    <label class="md:hidden ml-20">
+                                                    <label class="ml-20-mobile">
                                                         <input type="radio" name="is_visible" value="0" @if ($procedures->is_visible === 0) { checked } @endif disabled> 非表示
                                                     </label>
                                                 </div>
@@ -310,6 +304,7 @@
                         <hr>
                         @endif
                         @endforeach
+                        {{ $sortedProcedures->links() }}
                         @else
                         <section class="text-gray-600 body-font">
                             <div class="container px-5 mx-auto mt-4">

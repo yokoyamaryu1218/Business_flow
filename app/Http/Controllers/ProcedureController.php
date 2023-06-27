@@ -16,6 +16,7 @@ use App\Http\Requests\StoreProcedureRequest;
 use App\Http\Requests\UpdateProcedureRequest;
 use App\Services\ProcedureService;
 use App\Services\RoutineService;
+use App\Services\PaginationService;
 
 class ProcedureController extends Controller
 {
@@ -54,7 +55,7 @@ class ProcedureController extends Controller
         $task_list = Task::all();
         $procedure_list = Procedure::whereNotNull('approver_id')->get();
         $documents_list = Document::whereNotNull('approver_id')->get();
-        
+
         return view('tasks.procedures.create', compact('title', 'task_list', 'procedure_list', 'documents_list'));
     }
 
@@ -71,10 +72,10 @@ class ProcedureController extends Controller
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
 
-        if($documents === false){
+        if ($documents === false) {
             return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
         }
-        
+
         $procedureSV->createProcedure(
             $request->input('name'),
             $task_id,
@@ -83,7 +84,7 @@ class ProcedureController extends Controller
         );
 
         return (Auth::user()->role !== 9)
-            ? redirect()->route('task.index')
+            ? redirect()->route('task.edit', ['task' => $task_id])
             : redirect()->route('approval.index');
     }
 
@@ -98,7 +99,7 @@ class ProcedureController extends Controller
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
 
-        if($documents === false){
+        if ($documents === false) {
             return redirect()->back()->withErrors(['document' => '関連するマニュアルが選択されていません。']);
         }
 
@@ -180,11 +181,14 @@ class ProcedureController extends Controller
      * @param  \App\Models\Procedure  $procedure
      * @return \Illuminate\Http\Response
      */
-    public function edit($id1, $id2)
+    public function edit(Request $request, $id1, $id2)
     {
         $title = "手順詳細";
-        $task = Task::findorFail($id1);
+        $task = Task::findOrFail($id1);
         $procedures = Procedure::findOrFail($id2);
+
+        $pagination = 5;
+        $routinePage = $request->query('page', 1);
 
         if (!$procedures) {
             abort(404);
@@ -222,6 +226,10 @@ class ProcedureController extends Controller
         $routineSV = new RoutineService;
         $sortedProcedures = $routineSV->sortProcedures($matchingRoutines);
 
+        $paginationSV = new PaginationService;
+        $sortedProcedures = $paginationSV->paginateResults($sortedProcedures, $pagination, $routinePage);
+        $sortedProcedures->appends(['page' => $routinePage]);
+
         return view('procedures.edit', compact(
             'title',
             'task',
@@ -232,7 +240,8 @@ class ProcedureController extends Controller
             'documents_list',
             'my_documents',
             'sortedProcedures',
-            'matchingRoutines'
+            'matchingRoutines',
+            'routinePage',
         ));
     }
 
@@ -255,6 +264,10 @@ class ProcedureController extends Controller
 
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
+
+        if ($documents === false) {
+            return redirect()->back()->withErrors(['documents' => '関連マニュアルの選択に誤りがあります。']);
+        }
 
         try {
             DB::beginTransaction();

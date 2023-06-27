@@ -96,7 +96,7 @@ class RoutineController extends Controller
         $result = $routineSV->numbering($request->input('procedure_id'));
 
         if ($result === false) {
-            return redirect()->back()->withErrors(['previous_procedure_id' => '手順を重複して選択しています。']);
+            return redirect()->back()->withErrors(['previous_procedure_id' => '手順の選択に誤りがあります。']);
         }
 
         $procedureIds = $result;

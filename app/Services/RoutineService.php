@@ -164,10 +164,10 @@ class RoutineService
             }
         }
 
-        // 重複チェック
-        if ($this->hasDuplicates($procedureIds)) {
+        if ($procedureIds[0] === null || $this->hasDuplicates($procedureIds)) {
             return false;
         }
+                
         return $procedureIds;
     }
 

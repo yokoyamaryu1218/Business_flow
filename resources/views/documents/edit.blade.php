@@ -86,15 +86,14 @@
                                             <div class="Form-Item">
                                                 <p class="Form-Item-Label"><span class="Form-Item-Label-Required">編集可</span>公開設定</p>
                                                 <div class="Form-Item-RadioGroup">
-                                                    <label>
-                                                        <input type="radio" name="is_visible" value="1" @if ($document->is_visible === 1) { checked } @endif> 表示
-                                                    </label>
-                                                    <label class="hidden md:block">
-                                                        <input type="radio" name="is_visible" value="0" @if ($document->is_visible === 0) { checked } @endif> 非表示
-                                                    </label>
-                                                    <label class="md:hidden ml-20">
-                                                        <input type="radio" name="is_visible" value="0" @if ($document->is_visible === 0) { checked } @endif> 非表示
-                                                    </label>
+                                                    <div class="Form-Item-RadioGroup">
+                                                        <label>
+                                                            <input type="radio" name="is_visible" value="1" {{ $document->is_visible === 1 ? 'checked' : '' }}> 表示
+                                                        </label>
+                                                        <label class="ml-20-mobile">
+                                                            <input type="radio" name="is_visible" value="0" {{ $document->is_visible === 0 ? 'checked' : '' }}> 非表示
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <hr>

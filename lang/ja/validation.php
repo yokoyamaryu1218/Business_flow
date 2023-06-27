@@ -158,13 +158,8 @@ return [
         'kana' => 'カナ',
         'email' => 'メールアドレス',
         'password' => 'パスワード',
-        'current_password' => '現在のパスワード',
-        'event_name' => 'イベント名',
-        'price' => '価格',
-        'event_date' => 'イベントの日付',
-        'start_time' => '開始時間',
-        'end_time' => '終了時間',
-        'max_people' => '定員'
+        'password_confirmation' => 'パスワード確認',
+        'employee_number' => '社員番号',
     ],
 
 ];

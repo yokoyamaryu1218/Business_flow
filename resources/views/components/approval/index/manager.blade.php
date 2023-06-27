@@ -25,7 +25,7 @@
     <div class="flex" id="section-1">
         <!-- サイドバーを追加 -->
         <div class="flex fixed">
-            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10">
+            <div class="hidden md:block w-42 bg-white shadow-lg ml-8 mt-10 fixed bottom-0 left-0 mb-20">
                 <div class="list-group">
                     <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
                         <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.procedure')}}">
@@ -80,7 +80,7 @@
                                         @if (count($procedures) > 0)
                                         <section class="text-gray-600 body-font">
                                             <div class="container px-5 py-1 mx-auto">
-                                            <table class="w-full table-auto">
+                                                <table class="w-full table-auto">
                                                     <thead>
                                                         <tr>
                                                             <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">手順名</th>
@@ -152,7 +152,7 @@
                                         @if (count($routines) > 0)
                                         <section class="text-gray-600 body-font">
                                             <div class="container px-5 py-1 mx-auto">
-                                            <table class="w-full table-auto">
+                                                <table class="w-full table-auto">
                                                     <thead>
                                                         <tr>
                                                             <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">申請日</th>
@@ -223,7 +223,7 @@
                                         @if (count($documents) > 0)
                                         <section class="text-gray-600 body-font">
                                             <div class="container px-5 py-1 mx-auto">
-                                            <table class="w-full table-auto">
+                                                <table class="w-full table-auto">
                                                     <thead>
                                                         <tr>
                                                             <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">タイトル</th>

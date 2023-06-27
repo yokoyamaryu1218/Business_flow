@@ -13,18 +13,16 @@
 
     <div class="flex">
         <!-- サイドバーを追加 -->
-        <div class="flex fixed">
-            <div class="hidden md:block w-32 bg-white shadow-lg ml-8 mt-10">
-                <div class="list-group">
-                    <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
-                        <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.task')}}">
-                        <a class="text-red-500">作業一覧</a>
-                    </div>
-                    <hr class="my-2 scale-x-150" />
-                    <div id="menu-section-2" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-2';">
-                        <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.procedure')}}">
-                        <a class="text-red-500">手順一覧</a>
-                    </div>
+        <div class="hidden md:block w-32 bg-white shadow-lg ml-8 mt-10 fixed bottom-0 left-0 mb-20">
+            <div class="list-group">
+                <div id="menu-section-1" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-1';">
+                    <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.task')}}">
+                    <a class="text-red-500">作業一覧</a>
+                </div>
+                <hr class="my-2 scale-x-150" />
+                <div id="menu-section-2" class="list-group-item text-2xl -m-4 -mt-2 p-4 bg-white cursor-pointer flex items-center" onclick="window.location.href = '#section-2';">
+                    <img class="w-4 mr-2" src="data:image/png;base64,{{Config::get('base64.procedure')}}">
+                    <a class="text-red-500">手順一覧</a>
                 </div>
             </div>
         </div>

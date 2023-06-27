@@ -106,7 +106,7 @@
                                             </tbody>
                                             @endforeach
                                         </table>
-                                        {{ $search_list->links() }}
+                                        {{ $search_list->appends(['search' => $search])->links() }}
                                         @elseif (!empty($search))
                                         <p class="py-2">検索ワードに一致する「マニュアル」は見つかりませんでした。</p>
                                         @else

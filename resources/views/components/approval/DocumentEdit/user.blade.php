@@ -44,13 +44,13 @@
                                             <x-jet-validation-errors class="mb-4" />
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル名</p>
+                                                <p class="Form-Item-Label">マニュアル名</p>
                                                 <input type="text" id="document_title" class="Form-Item-Input" name="document_title" value="{{ $document->title }}" readonly>
                                             </div>
                                             <hr>
 
                                             <div class="Form-Item">
-                                                <p class="Form-Item-Label"><span class="Form-Item-Label-Required">必須</span>マニュアル内容</p>
+                                                <p class="Form-Item-Label">マニュアル内容</p>
                                             </div>
                                             <div class="flex flex-wrap w-full px-10 mb-4" style="background-color: #efefef; position: relative; height: 200px;">
                                                 <textarea id="document_details" name="document_details" class="absolute inset-0 w-full resize-none outline-none border-none bg-transparent" style="resize: vertical; background-color: #efefef;" readonly>{{ $fileContents }}</textarea>

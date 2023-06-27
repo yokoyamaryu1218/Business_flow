@@ -51,16 +51,21 @@ class DashboardController extends Controller
 
         $task = Task::findOrFail($id);
 
-        // Procedure のページネーションを取得
-        $procedures = Procedure::where('task_id', $task->id)
-            ->where('is_visible', 1)
-            ->whereNotNull('approver_id')
-            ->paginate($proceduresPagination);
+        if ($task->is_visible === 0) {
+            abort(404); // URLからアクセス不可にする
+        }
 
-        $routines = Routine::where('task_id', $id)
+        $proceduresQuery = Procedure::where('task_id', $task->id)
             ->where('is_visible', 1)
-            ->whereNotNull('approver_id')
-            ->paginate($routinesPagination, ['*'], 'routine_page', $routinePage);
+            ->whereNotNull('approver_id');
+
+        $procedures = $proceduresQuery->paginate($proceduresPagination);
+
+        $routinesQuery = Routine::where('task_id', $id)
+            ->where('is_visible', 1)
+            ->whereNotNull('approver_id');
+
+        $routines = $routinesQuery->paginate($routinesPagination, ['*'], 'routine_page', $routinePage);
 
         $routineSV = new RoutineService;
         $sortedProcedures = $routineSV->sortProcedures($routines);
@@ -77,7 +82,20 @@ class DashboardController extends Controller
      */
     public function procedures($id1, $id2)
     {
-        // 本文中に載せるマニュアル
+        // 手順を取得するクエリ
+        $procedure = Procedure::select('procedures.name', 'procedures.task_id', 'procedures.previous_procedure_id', 'procedures.next_procedure_ids', 'tasks.name AS task_name', 'procedures.is_visible')
+            ->join('tasks', 'procedures.task_id', '=', 'tasks.id')
+            ->where('procedures.id', $id1)
+            ->where('procedures.is_visible', 1)
+            ->whereNotNull('approver_id')
+            ->first();
+
+        // 手順が存在しないか可視性がない場合は404エラーを返す
+        if (!$procedure || $procedure->is_visible !== 1) {
+            abort(404);
+        }
+
+        // マニュアルを取得するクエリ
         $documents = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $id1)
             ->where('procedure_documents.document_id', $id2)
@@ -86,11 +104,12 @@ class DashboardController extends Controller
             ->select('documents.*')
             ->get();
 
+        // マニュアルが存在しない場合は404エラーを返す
         if ($documents->isEmpty()) {
-            abort(404); // URLからアクセス不可にする
+            abort(404);
         }
 
-        // 関連マニュアルを取得
+        // 関連マニュアルを取得するクエリ
         $manuals = Document::join('procedure_documents', 'documents.id', '=', 'procedure_documents.document_id')
             ->join('documents as d', 'd.id', '=', 'procedure_documents.document_id')
             ->where('procedure_documents.procedure_id', $id1)
@@ -99,29 +118,18 @@ class DashboardController extends Controller
             ->whereNotNull('d.approver_id')
             ->get();
 
-        // 手順の情報を取得
-        $procedure = Procedure::select('procedures.name', 'procedures.task_id', 'procedures.previous_procedure_id', 'procedures.next_procedure_ids', 'tasks.name AS task_name', 'procedures.is_visible')
-            ->join('tasks', 'procedures.task_id', '=', 'tasks.id')
-            ->where('procedures.id', $id1)
-            ->where('procedures.is_visible', 1)
-            ->whereNotNull('approver_id')
-            ->first();
+        $procedureSV = new ProcedureService;
+        // 前の手順のIDを取得
+        $previousProcedureIds = $procedureSV->separateCharacters($procedure->previous_procedure_id);
+        // 次の手順のIDを取得
+        $nextProcedureIds = $procedureSV->separateCharacters($procedure->next_procedure_ids);
 
-        $previousProcedureIds = [];
-        $nextProcedureIds = [];
-
-        // 前後の手順を取得
-        if ($procedure && $procedure->is_visible === 1) {
-            $procedureSV = new ProcedureService;
-            $previousProcedureIds = $procedureSV->separateCharacters($procedure->previous_procedure_id);
-            $nextProcedureIds = $procedureSV->separateCharacters($procedure->next_procedure_ids);
-        }
-
-        // テキストファイルの内容を取得する
         $documentSV = new DocumentService;
+        // テキストファイルの内容を取得
         $fileContents = $documentSV->getContents($documents->first()->file_name);
 
-        $title = $procedure ? $procedure->name . "・" . $documents->first()->title : '';
+        // タイトルを手順の名前と文書のタイトルから構築
+        $title = $procedure->name . "・" . $documents->first()->title;
 
         return view('dashboard.procedures.show', compact('title', 'documents', 'manuals', 'procedure', 'previousProcedureIds', 'nextProcedureIds', 'fileContents'));
     }
@@ -134,8 +142,11 @@ class DashboardController extends Controller
      */
     public function documents()
     {
-        $documents = Document::where('is_visible', 1)->paginate(20);
+        $documents = Document::where('is_visible', 1)
+            ->whereNotNull('approver_id')
+            ->paginate(20);
         $title = "マニュアル一覧";
+
         return view('dashboard.documents.index', compact('documents', 'title'));
     }
 
@@ -147,31 +158,29 @@ class DashboardController extends Controller
      */
     public function documents_details($id)
     {
-        $documents = Document::find($id);
-
-        if (!$documents) {
+        $documents = Document::findOrFail($id);
+    
+        if ($documents->is_visible === 0 || $documents->approver_id === null) {
             abort(404); // URLからアクセス不可にする
-        };
-
-        // マニュアルに紐づいている手順・作業を取得する
+        }
+    
         $procedures = DB::table('procedures')
             ->select('procedures.id', 'procedures.name', 'tasks.name AS task_name', 'procedures.task_id', 'procedure_documents.document_id')
             ->leftJoin('procedure_documents', 'procedures.id', '=', 'procedure_documents.procedure_id')
             ->leftJoin('tasks', 'procedures.task_id', '=', 'tasks.id')
             ->where('procedure_documents.document_id', $id)
-            ->whereNotNull('approver_id')
-            ->where('procedures.is_visible', 1)
+            ->whereNotNull('procedures.approver_id') // procedures テーブルの approver_id を参照する
+            ->where('procedures.is_visible', 1) // procedures テーブルの is_visible を参照する
             ->get();
-
-        // テキストファイルの内容を取得する
+    
         $documentSV = new DocumentService;
         $fileContents = $documentSV->getContents($documents->file_name);
-
+    
         $title = $documents->title;
-
+    
         return view('dashboard.documents.show', compact('documents', 'fileContents', 'procedures', 'title'));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      *
@@ -230,5 +239,84 @@ class DashboardController extends Controller
         }
 
         return view('dashboard.search', compact('title', 'search', 'search_target', 'search_list'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function tasks_search(Request $request)
+    {
+        $title = "検索結果";
+        $search = $request->input('search');
+        $taskPage = $request->query('task_page', 1);
+        $search_list = [];
+
+        if (!empty($search)) {
+            $taskQuery = Task::where('name', 'like', '%' . $search . '%')
+                ->where('is_visible', 1);
+
+            $task = $taskQuery->paginate(10, ['*'], 'task_page', $taskPage);
+
+            $search_list['task'] = $task;
+        }
+
+        return view('dashboard.task.search', compact('title', 'search', 'search_list'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function procedures_search(Request $request, $id)
+    {
+        $task = Task::findOrFail($id);
+        $title = "検索結果";
+        $search = $request->input('search');
+        $procedurePage = $request->query('procedure_page', 1);
+        $search_list = [];
+
+        if (!empty($search)) {
+            $procedureQuery = Procedure::where('name', 'like', '%' . $search . '%')
+                ->where('is_visible', 1)
+                ->where('task_id', $task->id)
+                ->whereNotNull('approver_id');
+
+            $procedure = $procedureQuery->paginate(10, ['*'], 'procedure_page', $procedurePage);
+
+            $search_list['procedure'] = $procedure;
+        }
+
+        return view('dashboard.procedures.search', compact('task', 'title', 'search', 'search_list'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function  documents_search(Request $request)
+    {
+        $title = "検索結果";
+        $search = $request->input('search');
+        $documentPage = $request->query('document_page', 1);
+        $search_list = [];
+
+        if (!empty($search)) {
+            $documentQuery = Document::where('title', 'like', '%' . $search . '%')
+                ->whereNotNull('approver_id')
+                ->where('is_visible', 1);
+
+            $document = $documentQuery->paginate(10, ['*'], 'document_page', $documentPage);
+
+            $search_list['document'] = $document;
+        }
+
+        return view('dashboard.documents.search', compact('title', 'search', 'search_list'));
     }
 }

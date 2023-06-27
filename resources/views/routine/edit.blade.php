@@ -110,11 +110,8 @@
                                                     <label>
                                                         <input type="radio" name="is_visible" value="1" @if ($routines[0]->is_visible === 1) { checked } @endif> 表示
                                                     </label>
-                                                    <label class="hidden md:block">
-                                                        <input type="radio" name="is_visible" value="0" @if ($routines[0]->is_visible === 0) { checked } @endif> 非表示
-                                                    </label>
-                                                    <label class="md:hidden ml-20">
-                                                        <input type="radio" name="is_visible" value="0" @if ($routines[0]->is_visible === 0) { checked } @endif> 非表示
+                                                    <label class="ml-20-mobile">
+                                                        <input type="radio" name="is_visible" value="1" @if ($routines[0]->is_visible === 0) { checked } @endif> 非表示
                                                     </label>
                                                 </div>
                                             </div>

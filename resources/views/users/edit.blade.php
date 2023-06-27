@@ -96,7 +96,6 @@
                                         <form method="POST" action="{{ route('user.password_update', ['id' => $user->employee_number]) }}">
                                             @csrf
                                             @method('post')
-                                            <x-jet-validation-errors class="mb-4" />
 
                                             <div class="Form-Item">
                                                 <p class="Form-Item-Label">パスワード</p>

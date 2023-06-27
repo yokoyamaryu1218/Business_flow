@@ -136,36 +136,39 @@ class DocumentController extends Controller
      */
     public function file_store(Request $request)
     {
-        DB::beginTransaction();
+        // ファイルがアップロードされたかどうかをチェックする
+        if (!$request->hasFile('file')) {
+            return redirect()->back()->withErrors(['file' => 'ファイルが選択されていません']);
+        }
 
-        try {
-            // ファイルがアップロードされたかどうかをチェックする
-            if (!$request->hasFile('file')) {
-                return redirect()->back()->withErrors(['file' => 'ファイルが選択されていません']);
+        $files = $request->file('file');
+        $successCount = 0; // 成功したファイルの件数をカウントする変数
+        $validationErrors = [];
+
+        foreach ($files as $file) {
+            // 各ファイルを処理する
+            $filenameWithExtension = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+
+            // ファイルが .txt 拡張子を持っているかどうかをチェックする
+            if (strtolower($extension) !== 'txt') {
+                // ファイルが .txt ファイルでない場合は、エラーメッセージを追加する
+                $validationErrors[] = 'テキストファイル以外のファイルが選択されています。';
+                continue;
             }
 
-            $files = $request->file('file');
-            $successCount = 0; // 成功したファイルの件数をカウントする変数
+            $content = file_get_contents($file->getRealPath());
+            $filenameWithoutExtension = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
 
-            foreach ($files as $file) {
-                // 各ファイルを処理する
-                $filenameWithExtension = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
+            // テキストファイルの中身が空の場合はエラーメッセージを追加する
+            if (empty($content)) {
+                $validationErrors[] = 'テキストファイルの中身が空白のファイルがあります。';
+                continue;
+            }
 
-                // ファイルが .txt 拡張子を持っているかどうかをチェックする
-                if (strtolower($extension) !== 'txt') {
-                    // ファイルが .txt ファイルでない場合は、エラーメッセージを含めて元のページにリダイレクトする
-                    return redirect()->back()->withErrors(['file' => 'テキストファイル以外のファイルが選択されています。']);
-                }
+            DB::beginTransaction();
 
-                $content = file_get_contents($file->getRealPath());
-                $filenameWithoutExtension = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
-
-                // テキストファイルの中身が空の場合はエラーメッセージを表示してリダイレクトする
-                if (empty($content)) {
-                    return redirect()->back()->withErrors(['file' => 'テキストファイルの中身が空白のファイルがあります。']);
-                }
-
+            try {
                 $documentSV = new DocumentService;
                 $last_number = Document::orderBy('id', 'desc')->value('document_number');
 
@@ -215,19 +218,23 @@ class DocumentController extends Controller
                     ]);
                     session()->flash('status', '登録が完了しました。承認までお待ちください。');
                 }
-            }
 
-            if (Auth::user()->role !== 9) {
-                if ($successCount > 0) {
-                    session()->flash('status', $successCount . '件のファイルが登録されました。');
-                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                dd($e);
+                session()->flash('alert', '登録エラー');
             }
+        }
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            dd($e);
-            session()->flash('alert', '登録エラー');
+        if (count($validationErrors) > 0) {
+            return redirect()->back()->withErrors(['file' => $validationErrors]);
+        }
+
+        if (Auth::user()->role !== 9) {
+            if ($successCount > 0) {
+                session()->flash('status', $successCount . '件のファイルが登録されました。');
+            }
         }
 
         return (Auth::user()->role !== 9)
