@@ -170,6 +170,7 @@ class DashboardController extends Controller
             ->leftJoin('tasks', 'procedures.task_id', '=', 'tasks.id')
             ->where('procedure_documents.document_id', $id)
             ->whereNotNull('procedures.approver_id') // procedures テーブルの approver_id を参照する
+            ->where('tasks.is_visible', 1)
             ->where('procedures.is_visible', 1) // procedures テーブルの is_visible を参照する
             ->get();
     

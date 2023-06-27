@@ -262,6 +262,8 @@ class ProcedureController extends Controller
         $nextProcedureId =  $request->input('next_procedure_id');
         $nextProcedureIds = implode(',', $nextProcedureId);
 
+        $is_visible = $request->input('is_visible');
+
         $procedureSV = new ProcedureService;
         $documents = $procedureSV->checkDocuments($request->input('document_id'));
 
@@ -304,6 +306,7 @@ class ProcedureController extends Controller
             $procedures->name = $name;
             $procedures->previous_procedure_id  = $previousProcedureIds;
             $procedures->next_procedure_ids  = $nextProcedureIds;
+            $procedures->is_visible  = $is_visible;
             $procedures->updated_at = Carbon::now();
             $procedures->save();
 
