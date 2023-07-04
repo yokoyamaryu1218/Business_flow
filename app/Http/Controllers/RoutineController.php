@@ -24,7 +24,7 @@ class RoutineController extends Controller
         $task_id = $id1;
 
         // 手順リストの取得
-        $procedure_list = Procedure::whereNotNull('approver_id')->get();
+        $procedure_list = Procedure::where('task_id',$id1)->whereNotNull('approver_id')->get();
 
         // ルーティンの取得
         $routines = Routine::where('id', $id2)->get();
