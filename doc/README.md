@@ -1,9 +1,9 @@
 ## 設計書の説明
 　保存しているファイルはGoogle Driveへ保存しているため、各リンクからもご覧いただけます。
 
-- **01.セットアップ手順書.docx**
+- **01.セットアップ手順書.pdf**
     - 本システムのセットアップ方法を記載しております。<br>
-    https://docs.google.com/document/d/1WZ95FHKCXLrSKt60uXayKTnycDMGFOeM/edit?usp=sharing&ouid=102462271813312213972
+    https://drive.google.com/file/d/1hdcWE4tzJQCaqpKkSuqo3WrKiJz-DygP
 
 - **02.テーブル定義書.xlsx**
     - テーブル定義とE-R図を記載しております。<br>
